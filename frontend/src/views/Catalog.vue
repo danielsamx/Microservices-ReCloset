@@ -32,7 +32,7 @@ function setSize(id) { filters.value.size_id = filters.value.size_id === id ? ''
 <template>
   <div class="flex flex-col sm:flex-row sm:items-center gap-3 mb-3">
     <div class="min-w-0">
-      <h1 class="font-display font-bold text-2xl leading-tight">Catálogo</h1>
+      <h1 class="font-display font-bold text-xl sm:text-2xl leading-tight">Catálogo</h1>
       <p class="text-sm text-slate-400">
         <template v-if="loading">Buscando prendas…</template>
         <template v-else>{{ total }} publicacion{{ total === 1 ? '' : 'es' }} disponible{{ total === 1 ? '' : 's' }}</template>
@@ -50,11 +50,11 @@ function setSize(id) { filters.value.size_id = filters.value.size_id === id ? ''
 
   <div class="card p-3 mb-4" :class="{ 'hidden sm:block': !showFilters }">
     <div class="flex flex-wrap items-center gap-2">
-      <select v-model="filters.category_id" class="input !py-1.5 !w-auto text-sm" aria-label="Categoría">
+      <select v-model="filters.category_id" class="input !py-1.5 text-sm flex-1 min-w-[9rem] sm:flex-none sm:!w-auto" aria-label="Categoría">
         <option value="">Todas las categorías</option>
         <option v-for="c in meta.categories" :key="c.id" :value="c.id">{{ c.name }}</option>
       </select>
-      <select v-model="filters.color_id" class="input !py-1.5 !w-auto text-sm" aria-label="Color">
+      <select v-model="filters.color_id" class="input !py-1.5 text-sm flex-1 min-w-[9rem] sm:flex-none sm:!w-auto" aria-label="Color">
         <option value="">Todos los colores</option>
         <option v-for="c in meta.colors" :key="c.id" :value="c.id">{{ c.name }}</option>
       </select>

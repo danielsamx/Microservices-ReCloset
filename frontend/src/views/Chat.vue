@@ -83,11 +83,11 @@ onBeforeUnmount(() => { if (channel.value) getEcho().leave(`conversation.${chann
 
 <template>
   <div class="flex items-center justify-between mb-3">
-    <h1 class="font-display font-bold text-2xl">Mensajes</h1>
+    <h1 class="font-display font-bold text-xl sm:text-2xl">Mensajes</h1>
     <router-link to="/catalog" class="btn btn-ghost btn-sm hidden sm:inline-flex"><Icon name="compass" :size="15" /> Explorar</router-link>
   </div>
 
-  <div class="grid md:grid-cols-[330px_1fr] gap-3 h-[calc(100dvh-190px)] md:h-[calc(100dvh-170px)] min-h-[420px]">
+  <div class="grid md:grid-cols-[330px_1fr] gap-3 h-[calc(100dvh-14.5rem)] md:h-[calc(100dvh-11.5rem)] min-h-[380px]">
     <aside class="card overflow-hidden flex flex-col" :class="{ 'hidden md:flex': active }">
       <div class="px-3 py-2.5 border-b border-slate-100 shrink-0 flex items-center gap-2">
         <p class="font-semibold text-slate-700 text-sm">Conversaciones</p>
@@ -172,7 +172,7 @@ onBeforeUnmount(() => { if (channel.value) getEcho().leave(`conversation.${chann
         </div>
 
         <form @submit.prevent="send" class="p-2.5 border-t border-slate-100 flex items-end gap-2 shrink-0 bg-white">
-          <input v-model="draft" placeholder="Escribe un mensaje…" class="input rounded-2xl flex-1" aria-label="Escribe un mensaje" autocomplete="off" />
+          <input v-model="draft" placeholder="Escribe un mensaje…" class="input rounded-2xl flex-1 min-w-0" aria-label="Escribe un mensaje" autocomplete="off" />
           <button class="btn btn-primary rounded-2xl !px-3.5 shrink-0" :disabled="sending || !draft.trim()" aria-label="Enviar mensaje">
             <Spinner v-if="sending" :size="18" light /><Icon v-else name="send" :size="18" />
           </button>

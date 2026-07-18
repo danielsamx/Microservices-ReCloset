@@ -77,7 +77,7 @@ async function submit() {
     </button>
 
     <div class="card card-pad animate-fade-up">
-      <h1 class="font-display font-bold text-xl mb-0.5">{{ editing ? 'Editar publicación' : 'Publicar prenda' }}</h1>
+      <h1 class="font-display font-bold text-lg sm:text-xl mb-0.5">{{ editing ? 'Editar publicación' : 'Publicar prenda' }}</h1>
       <p class="text-sm text-slate-400 mb-5">{{ editing ? 'Actualiza los datos de tu publicación' : 'Comparte una prenda con la comunidad' }}</p>
 
       <div v-if="gErr" class="flex items-center gap-2 bg-rose-50 text-rose-600 text-sm p-3 rounded-xl mb-4">

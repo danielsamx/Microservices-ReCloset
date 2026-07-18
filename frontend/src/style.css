@@ -123,3 +123,31 @@
     scroll-behavior: auto !important;
   }
 }
+
+/* ============================================================
+   Reglas responsive globales
+   ============================================================ */
+@layer base {
+  /* Nunca scroll horizontal por desbordes accidentales */
+  html, body { max-width: 100%; overflow-x: hidden; }
+
+  /* Media siempre fluida dentro de su contenedor */
+  img, video, canvas, svg { max-width: 100%; height: auto; }
+  img.object-cover, video.object-cover { height: 100%; }
+
+  /* Evita que el zoom automático de iOS dispare al enfocar inputs (<16px) */
+  @media (max-width: 640px) {
+    input, select, textarea { font-size: 16px; }
+  }
+
+  /* Palabras muy largas no rompen el layout */
+  h1, h2, h3, p, span, a { overflow-wrap: break-word; }
+}
+
+@layer components {
+  /* Área táctil mínima cómoda en móvil (WCAG ~44px) */
+  @media (pointer: coarse) {
+    .btn { min-height: 44px; }
+    .btn-sm { min-height: 38px; }
+  }
+}

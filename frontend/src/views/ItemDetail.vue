@@ -107,12 +107,12 @@ async function contact() {
         </div>
       </div>
 
-      <div class="mt-5 flex gap-3">
-        <button v-if="!isMine" @click="contact" :disabled="starting || item.status === 'sold'" class="btn btn-primary btn-lg flex-1 sm:flex-none">
+      <div class="mt-5 flex flex-col sm:flex-row gap-2.5">
+        <button v-if="!isMine" @click="contact" :disabled="starting || item.status === 'sold'" class="btn btn-primary btn-lg w-full sm:w-auto">
           <Spinner v-if="starting" :size="18" light /><Icon v-else name="message" :size="18" />
           {{ item.status === 'sold' ? 'No disponible' : 'Contactar al vendedor' }}
         </button>
-        <router-link v-else :to="`/items/${item.id}/edit`" class="btn btn-ghost btn-lg"><Icon name="edit" :size="18" /> Editar publicación</router-link>
+        <router-link v-else :to="`/items/${item.id}/edit`" class="btn btn-ghost btn-lg w-full sm:w-auto"><Icon name="edit" :size="18" /> Editar publicación</router-link>
       </div>
     </div>
   </div>

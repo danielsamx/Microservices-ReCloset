@@ -6,7 +6,7 @@ const notif = useNotifications()
 <template>
   <div class="max-w-2xl mx-auto">
     <div class="mb-4">
-      <h1 class="font-display font-bold text-2xl">Notificaciones</h1>
+      <h1 class="font-display font-bold text-xl sm:text-2xl">Notificaciones</h1>
       <p class="text-sm text-slate-400">{{ notif.unread ? `${notif.unread} sin leer` : 'Estás al día' }}</p>
     </div>
     <NotificationsPanel />

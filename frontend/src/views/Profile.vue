@@ -7,8 +7,9 @@ import Icon from '../components/ui/Icon.vue'
 const auth = useAuth(); const router = useRouter()
 const confirmOut = ref(false); const loggingOut = ref(false)
 const shortcuts = [
-  { to: '/my-items', icon: 'bag', label: 'Mi armario' },
+  { to: '/my-items', icon: 'bag', label: 'Mis publicaciones' },
   { to: '/chat', icon: 'message', label: 'Mensajes' },
+  { to: '/notifications', icon: 'bell', label: 'Notificaciones' },
   { to: '/items/new', icon: 'plus', label: 'Publicar prenda' },
 ]
 async function logout() { loggingOut.value = true; await auth.logout(); router.push('/login') }

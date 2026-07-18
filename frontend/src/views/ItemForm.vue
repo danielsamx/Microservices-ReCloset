@@ -7,6 +7,7 @@ import { useToasts } from '../store/toasts'
 import Spinner from '../components/ui/Spinner.vue'
 import Icon from '../components/ui/Icon.vue'
 import SizeChips from '../components/ui/SizeChips.vue'
+import FormErrors from '../components/ui/FormErrors.vue'
 
 const route = useRoute(); const router = useRouter(); const toasts = useToasts()
 const editing = computed(() => !!route.params.id)
@@ -65,7 +66,9 @@ async function submit() {
     }
   } catch (e) {
     errors.value = e.response?.data?.errors || {}
-    gErr.value = e.response?.data?.message || (e.response ? 'Revisa los campos marcados.' : 'Error de conexión.')
+    gErr.value = e.response?.data?.message
+      || (e.response ? 'No se pudo guardar la publicación. Revisa los campos marcados.'
+                     : 'No pudimos conectar con el servidor. Comprueba tu conexión e inténtalo de nuevo.')
   } finally { saving.value = false }
 }
 </script>
@@ -80,9 +83,7 @@ async function submit() {
       <h1 class="font-display font-bold text-lg sm:text-xl mb-0.5">{{ editing ? 'Editar publicación' : 'Publicar prenda' }}</h1>
       <p class="text-sm text-slate-400 mb-5">{{ editing ? 'Actualiza los datos de tu publicación' : 'Comparte una prenda con la comunidad' }}</p>
 
-      <div v-if="gErr" class="flex items-center gap-2 bg-rose-50 text-rose-600 text-sm p-3 rounded-xl mb-4">
-        <Icon name="warning" :size="17" /> {{ gErr }}
-      </div>
+      <FormErrors :message="gErr" :errors="errors" />
 
       <form @submit.prevent="submit" class="space-y-4" novalidate>
         <div class="grid sm:grid-cols-2 gap-4">

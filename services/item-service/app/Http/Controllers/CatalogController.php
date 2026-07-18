@@ -6,24 +6,26 @@ use App\Support\AuthClient;
 
 class CatalogController extends Controller
 {
+    private const WITH = ['media', 'category', 'size', 'sizes', 'color'];
+
     public function __construct(private AuthClient $auth) {}
 
-    // RF-06 / RF-07: public catalog, only AVAILABLE items from OTHER users,
-    // combined filters by category + size + color.
     public function index(Request $request)
     {
-        $q = Item::query()->with(['media','category','size','color'])
-            ->where('status', Item::STATUS_AVAILABLE);
+        $q = Item::query()->with(self::WITH)->where('status', Item::STATUS_AVAILABLE);
 
-        // Exclude the caller's own items when a valid token is present (optional auth).
         if ($token = $request->bearerToken()) {
             if ($user = $this->auth->verify($token)) {
                 $q->where('owner_id', '!=', $user['id']);
             }
         }
 
-        foreach (['category_id','size_id','color_id'] as $f) {
-            if ($request->filled($f)) $q->where($f, (int) $request->query($f));
+        if ($request->filled('category_id')) $q->where('category_id', (int) $request->query('category_id'));
+        if ($request->filled('color_id')) $q->where('color_id', (int) $request->query('color_id'));
+        // el filtro de talla coincide con CUALQUIERA de las tallas de la publicación
+        if ($request->filled('size_id')) {
+            $sizeId = (int) $request->query('size_id');
+            $q->whereHas('sizes', fn ($s) => $s->where('sizes.id', $sizeId));
         }
         if ($request->filled('search')) {
             $s = $request->query('search');
@@ -36,8 +38,8 @@ class CatalogController extends Controller
 
     public function show(int $id)
     {
-        $item = Item::with(['media','category','size','color'])->find($id);
-        if (!$item) return response()->json(['message' => 'Not found'], 404);
+        $item = Item::with(self::WITH)->find($id);
+        if (!$item) return response()->json(['message' => 'No encontramos ese recurso.'], 404);
         return response()->json(['item' => $item]);
     }
 }

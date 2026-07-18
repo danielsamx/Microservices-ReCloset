@@ -1,0 +1,98 @@
+<?php
+/** Mensajes de validación en español, redactados para el usuario final. */
+return [
+    'accepted' => 'Debes aceptar :attribute.',
+    'active_url' => ':Attribute no es una URL válida.',
+    'after' => ':Attribute debe ser una fecha posterior a :date.',
+    'array' => ':Attribute debe ser una lista.',
+    'before' => ':Attribute debe ser una fecha anterior a :date.',
+    'between' => [
+        'numeric' => ':Attribute debe estar entre :min y :max.',
+        'file' => ':Attribute debe pesar entre :min y :max kilobytes.',
+        'string' => ':Attribute debe tener entre :min y :max caracteres.',
+        'array' => ':Attribute debe tener entre :min y :max elementos.',
+    ],
+    'boolean' => ':Attribute debe ser verdadero o falso.',
+    'confirmed' => 'La confirmación de :attribute no coincide.',
+    'date' => ':Attribute no es una fecha válida.',
+    'different' => ':Attribute y :other deben ser diferentes.',
+    'digits' => ':Attribute debe tener :digits dígitos.',
+    'email' => 'Introduce un correo electrónico válido.',
+    'exists' => 'La opción seleccionada en :attribute no es válida.',
+    'file' => ':Attribute debe ser un archivo válido.',
+    'filled' => ':Attribute es obligatorio.',
+    'image' => ':Attribute debe ser una imagen.',
+    'in' => 'La opción seleccionada en :attribute no es válida.',
+    'integer' => ':Attribute debe ser un número entero.',
+    'max' => [
+        'numeric' => ':Attribute no puede ser mayor que :max.',
+        'file' => ':Attribute no puede pesar más de :max kilobytes.',
+        'string' => ':Attribute no puede tener más de :max caracteres.',
+        'array' => 'Puedes seleccionar como máximo :max opciones en :attribute.',
+    ],
+    'mimes' => ':Attribute debe ser un archivo de tipo: :values.',
+    'mimetypes' => ':Attribute debe ser una imagen (JPG, PNG, WEBP, GIF) o un video (MP4, WEBM).',
+    'min' => [
+        'numeric' => ':Attribute debe ser al menos :min.',
+        'file' => ':Attribute debe pesar al menos :min kilobytes.',
+        'string' => ':Attribute debe tener al menos :min caracteres.',
+        'array' => 'Debes seleccionar al menos :min opción en :attribute.',
+    ],
+    'numeric' => ':Attribute debe ser un número.',
+    'present' => ':Attribute debe estar presente.',
+    'required' => ':Attribute es obligatorio.',
+    'required_if' => ':Attribute es obligatorio cuando :other es :value.',
+    'same' => ':Attribute y :other deben coincidir.',
+    'size' => [
+        'numeric' => ':Attribute debe ser :size.',
+        'file' => ':Attribute debe pesar :size kilobytes.',
+        'string' => ':Attribute debe tener :size caracteres.',
+        'array' => ':Attribute debe contener :size elementos.',
+    ],
+    'string' => ':Attribute debe ser texto.',
+    'unique' => 'Ese :attribute ya está registrado.',
+    'uploaded' => 'No se pudo subir :attribute. Puede que el archivo sea demasiado grande.',
+    'url' => ':Attribute debe ser una URL válida.',
+
+    'password' => [
+        'letters' => 'La contraseña debe contener al menos una letra.',
+        'mixed' => 'La contraseña debe contener mayúsculas y minúsculas.',
+        'numbers' => 'La contraseña debe contener al menos un número.',
+        'symbols' => 'La contraseña debe contener al menos un símbolo.',
+        'uncompromised' => 'Esta contraseña ha aparecido en filtraciones de datos. Elige otra.',
+    ],
+
+    'custom' => [
+        'files' => [
+            'required' => 'Añade al menos una foto o video de la prenda.',
+            'max' => 'Puedes subir un máximo de :max archivos.',
+        ],
+        'size_ids' => [
+            'required' => 'Selecciona al menos una talla.',
+        ],
+        'password' => [
+            'min' => 'La contraseña debe tener al menos :min caracteres.',
+        ],
+    ],
+
+    /** Nombres legibles de los campos */
+    'attributes' => [
+        'name' => 'el nombre',
+        'description' => 'la descripción',
+        'email' => 'el correo electrónico',
+        'password' => 'la contraseña',
+        'password_confirmation' => 'la confirmación de contraseña',
+        'price' => 'el precio',
+        'category_id' => 'la categoría',
+        'color_id' => 'el color',
+        'size_id' => 'la talla',
+        'size_ids' => 'las tallas',
+        'size_ids.*' => 'la talla',
+        'files' => 'las fotos',
+        'files.*' => 'el archivo',
+        'file' => 'el archivo',
+        'status' => 'el estado',
+        'body' => 'el mensaje',
+        'item_id' => 'la publicación',
+    ],
+];

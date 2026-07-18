@@ -21,11 +21,26 @@ class NotificationController extends Controller
     public function markRead(Request $request, int $id)
     {
         Notification::where('user_id', $this->uid($request))->where('id', $id)->update(['read_at' => now()]);
-        return response()->json(['message' => 'ok']);
+        return response()->json(['message' => 'Listo.']);
     }
     public function markAllRead(Request $request)
     {
         Notification::where('user_id', $this->uid($request))->whereNull('read_at')->update(['read_at' => now()]);
-        return response()->json(['message' => 'ok']);
+        return response()->json(['message' => 'Listo.']);
+    }
+
+    /** Elimina una notificación (solo del usuario autenticado). */
+    public function destroy(Request $request, int $id)
+    {
+        $deleted = Notification::where('user_id', $this->uid($request))->where('id', $id)->delete();
+        if (!$deleted) return response()->json(['message' => 'No encontramos ese recurso.'], 404);
+        return response()->json(['message' => 'Eliminado correctamente.']);
+    }
+
+    /** Elimina todas las notificaciones del usuario autenticado. */
+    public function destroyAll(Request $request)
+    {
+        $count = Notification::where('user_id', $this->uid($request))->delete();
+        return response()->json(['message' => 'Eliminado correctamente.', 'count' => $count]);
     }
 }

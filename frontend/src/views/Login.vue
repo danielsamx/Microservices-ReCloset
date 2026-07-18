@@ -16,7 +16,7 @@ async function submit() {
     toasts.success('¡Bienvenido de vuelta!')
     router.push('/catalog')
   } catch (e) {
-    error.value = e.response?.data?.errors?.email?.[0] || (e.response ? 'Correo o contraseña incorrectos.' : 'Error de conexión. Inténtalo de nuevo.')
+    error.value = e.response?.data?.errors?.email?.[0] || (e.response ? 'Correo o contraseña incorrectos.' : 'No pudimos conectar con el servidor. Comprueba tu conexión.')
   } finally { loading.value = false }
 }
 </script>

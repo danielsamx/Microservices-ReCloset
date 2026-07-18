@@ -11,21 +11,23 @@ Route::get('/health', [HealthController::class, 'health']);
 Route::get('/metrics', [MetricsController::class, 'metrics']);
 
 Route::middleware('service.auth')->group(function () {
-    // Echo private-channel authorization
+    // Autorización de canales privados de Echo
     Route::post('/api/broadcasting/auth', [BroadcastAuthController::class, 'authenticate']);
 
-    // Conversations (RF-10, RF-12, RF-13)
+    // Conversaciones (RF-10, RF-12, RF-13)
     Route::get('/api/conversations', [ConversationController::class, 'index']);
     Route::post('/api/conversations', [ConversationController::class, 'store']);
     Route::get('/api/conversations/{id}', [ConversationController::class, 'show']);
     Route::delete('/api/conversations/{id}', [ConversationController::class, 'destroy']);
 
-    // Messages (RF-11)
+    // Mensajes (RF-11)
     Route::post('/api/conversations/{id}/messages', [MessageController::class, 'store']);
 
-    // Notifications
+    // Notificaciones
     Route::get('/api/notifications', [NotificationController::class, 'index']);
     Route::get('/api/notifications/unread-count', [NotificationController::class, 'unreadCount']);
     Route::patch('/api/notifications/{id}/read', [NotificationController::class, 'markRead']);
     Route::patch('/api/notifications/read-all', [NotificationController::class, 'markAllRead']);
+    Route::delete('/api/notifications/{id}', [NotificationController::class, 'destroy']);
+    Route::delete('/api/notifications', [NotificationController::class, 'destroyAll']);
 });

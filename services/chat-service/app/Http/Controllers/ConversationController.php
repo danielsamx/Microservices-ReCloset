@@ -40,7 +40,7 @@ class ConversationController extends Controller
         $data = $request->validate(['item_id' => ['required', 'integer']]);
 
         $item = $this->items->find($data['item_id']);
-        if (!$item) return response()->json(['message' => 'Item not found'], 404);
+        if (!$item) return response()->json(['message' => 'Esa publicación ya no existe.'], 404);
 
         if ((int) $item['owner_id'] === (int) $user['id']) {
             return response()->json(['message' => 'No puedes iniciar una conversación contigo mismo.'], 422);
@@ -66,8 +66,8 @@ class ConversationController extends Controller
     {
         $uid = $this->user($request)['id'];
         $conv = Conversation::find($id);
-        if (!$conv) return response()->json(['message' => 'Not found'], 404);
-        if (!$conv->isParticipant($uid)) return response()->json(['message' => 'Forbidden'], 403);
+        if (!$conv) return response()->json(['message' => 'No encontramos ese recurso.'], 404);
+        if (!$conv->isParticipant($uid)) return response()->json(['message' => 'No tienes permiso para realizar esta acción.'], 403);
 
         $conv->messages()->whereNull('read_at')->where('sender_id', '!=', $uid)->update(['read_at' => now()]);
         return response()->json([
@@ -85,9 +85,9 @@ class ConversationController extends Controller
     {
         $uid = $this->user($request)['id'];
         $conv = Conversation::find($id);
-        if (!$conv) return response()->json(['message' => 'Not found'], 404);
-        if (!$conv->isParticipant($uid)) return response()->json(['message' => 'Forbidden'], 403);
+        if (!$conv) return response()->json(['message' => 'No encontramos ese recurso.'], 404);
+        if (!$conv->isParticipant($uid)) return response()->json(['message' => 'No tienes permiso para realizar esta acción.'], 403);
         $conv->delete(); // cascades messages
-        return response()->json(['message' => 'Deleted']);
+        return response()->json(['message' => 'Eliminado correctamente.']);
     }
 }

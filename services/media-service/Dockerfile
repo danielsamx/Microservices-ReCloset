@@ -10,6 +10,7 @@ COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 WORKDIR /app
 COPY . .
 RUN sed -i 's/\r$//' docker/entrypoint.sh
+COPY docker/php.ini /usr/local/etc/php/conf.d/zz-recloset.ini
 RUN composer config --no-plugins policy.advisories.block false 2>/dev/null || true
 RUN composer install --no-interaction --prefer-dist --optimize-autoloader --no-dev \
     && chmod +x docker/entrypoint.sh \

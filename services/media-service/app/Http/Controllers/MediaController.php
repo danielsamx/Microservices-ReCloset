@@ -22,7 +22,7 @@ class MediaController extends Controller
     // Store a file on the persistent blob volume (called by Item Service only)
     public function store(Request $request)
     {
-        if (!$this->internalOk($request)) return response()->json(['message' => 'Forbidden'], 403);
+        if (!$this->internalOk($request)) return response()->json(['message' => 'No tienes permiso para realizar esta acción.'], 403);
 
         $maxKb = (int) (env('MEDIA_MAX_FILE_SIZE', 52428800) / 1024);
         $request->validate([
@@ -33,7 +33,7 @@ class MediaController extends Controller
         $file = $request->file('file');
         $mime = $file->getMimeType();
         if (!isset(self::ALLOWED[$mime])) {
-            return response()->json(['message' => 'Unsupported media type'], 422);
+            return response()->json(['message' => 'Ese tipo de archivo no está permitido. Usa JPG, PNG, WEBP, GIF, MP4 o WEBM.'], 422);
         }
         $ext = self::ALLOWED[$mime];                      // trust server-detected mime, not client ext
 
@@ -72,9 +72,9 @@ class MediaController extends Controller
     public function raw(string $id)
     {
         $media = MediaFile::find($id);
-        if (!$media) return response()->json(['message' => 'Not found'], 404);
+        if (!$media) return response()->json(['message' => 'No encontramos ese recurso.'], 404);
         $absolute = $this->root() . '/' . $media->path;
-        if (!is_file($absolute)) return response()->json(['message' => 'Missing blob'], 404);
+        if (!is_file($absolute)) return response()->json(['message' => 'El archivo ya no está disponible.'], 404);
 
         return response()->file($absolute, [
             'Content-Type' => $media->mime,
@@ -85,31 +85,31 @@ class MediaController extends Controller
     // Metadata (internal)
     public function meta(Request $request, string $id)
     {
-        if (!$this->internalOk($request)) return response()->json(['message' => 'Forbidden'], 403);
+        if (!$this->internalOk($request)) return response()->json(['message' => 'No tienes permiso para realizar esta acción.'], 403);
         $media = MediaFile::find($id);
-        if (!$media) return response()->json(['message' => 'Not found'], 404);
+        if (!$media) return response()->json(['message' => 'No encontramos ese recurso.'], 404);
         return response()->json(['media' => $media]);
     }
 
     // Delete a single file (internal)
     public function destroy(Request $request, string $id)
     {
-        if (!$this->internalOk($request)) return response()->json(['message' => 'Forbidden'], 403);
+        if (!$this->internalOk($request)) return response()->json(['message' => 'No tienes permiso para realizar esta acción.'], 403);
         $media = MediaFile::find($id);
-        if (!$media) return response()->json(['message' => 'Not found'], 404);
+        if (!$media) return response()->json(['message' => 'No encontramos ese recurso.'], 404);
         $this->unlink($media);
         $media->delete();
-        return response()->json(['message' => 'Deleted']);
+        return response()->json(['message' => 'Eliminado correctamente.']);
     }
 
     // Delete every file for an item (internal) - used when a prenda is removed
     public function destroyByItem(Request $request, int $itemId)
     {
-        if (!$this->internalOk($request)) return response()->json(['message' => 'Forbidden'], 403);
+        if (!$this->internalOk($request)) return response()->json(['message' => 'No tienes permiso para realizar esta acción.'], 403);
         $files = MediaFile::where('item_id', $itemId)->get();
         foreach ($files as $m) { $this->unlink($m); $m->delete(); }
         Log::info('media.deleted_by_item', ['item_id' => $itemId, 'count' => $files->count()]);
-        return response()->json(['message' => 'Deleted', 'count' => $files->count()]);
+        return response()->json(['message' => 'Eliminado correctamente.', 'count' => $files->count()]);
     }
 
     private function unlink(MediaFile $m): void

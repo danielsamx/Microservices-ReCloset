@@ -5,9 +5,9 @@ return [
     'debug' => (bool) env('APP_DEBUG', false),
     'url' => env('APP_URL', 'http://localhost'),
     'timezone' => 'UTC',
-    'locale' => 'en',
-    'fallback_locale' => 'en',
-    'faker_locale' => 'en_US',
+    'locale' => env('APP_LOCALE', 'es'),
+    'fallback_locale' => 'es',
+    'faker_locale' => 'es_ES',
     'key' => env('APP_KEY'),
     'cipher' => 'AES-256-CBC',
     'providers' => Illuminate\Support\ServiceProvider::defaultProviders()->merge([

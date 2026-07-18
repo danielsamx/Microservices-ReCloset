@@ -17,7 +17,7 @@ class BroadcastAuthController extends Controller
         $socketId = (string) $request->input('socket_id');
 
         if (!$this->authorized($user['id'], $channel)) {
-            return response()->json(['message' => 'Forbidden'], 403);
+            return response()->json(['message' => 'No tienes permiso para realizar esta acción.'], 403);
         }
 
         $secret = (string) env('REVERB_APP_SECRET');

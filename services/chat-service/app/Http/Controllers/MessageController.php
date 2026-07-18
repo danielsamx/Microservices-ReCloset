@@ -16,8 +16,8 @@ class MessageController extends Controller
     {
         $user = $this->user($request);
         $conv = Conversation::find($conversationId);
-        if (!$conv) return response()->json(['message' => 'Not found'], 404);
-        if (!$conv->isParticipant($user['id'])) return response()->json(['message' => 'Forbidden'], 403);
+        if (!$conv) return response()->json(['message' => 'No encontramos ese recurso.'], 404);
+        if (!$conv->isParticipant($user['id'])) return response()->json(['message' => 'No tienes permiso para realizar esta acción.'], 403);
 
         $data = $request->validate(['body' => ['required', 'string', 'min:1', 'max:2000']]);
 

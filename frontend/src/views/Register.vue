@@ -5,6 +5,7 @@ import { useAuth } from '../store/auth'
 import { useToasts } from '../store/toasts'
 import Spinner from '../components/ui/Spinner.vue'
 import Icon from '../components/ui/Icon.vue'
+import FormErrors from '../components/ui/FormErrors.vue'
 import Logo from '../components/ui/Logo.vue'
 const auth = useAuth(); const router = useRouter(); const toasts = useToasts()
 const form = ref({ name: '', email: '', password: '', password_confirmation: '' })
@@ -23,7 +24,9 @@ async function submit() {
     router.push('/catalog')
   } catch (e) {
     if (e.response?.data?.errors) errors.value = e.response.data.errors
-    else generalError.value = e.response ? 'No se pudo completar el registro.' : 'Error de conexión.'
+    else generalError.value = e.response
+      ? 'No se pudo completar el registro. Inténtalo de nuevo.'
+      : 'No pudimos conectar con el servidor. Comprueba tu conexión.'
   } finally { loading.value = false }
 }
 </script>
@@ -35,7 +38,7 @@ async function submit() {
       <p class="text-sm text-slate-400">Únete a la comunidad de moda circular</p>
     </div>
     <div class="card card-pad animate-fade-up">
-      <div v-if="generalError" class="flex items-center gap-2 bg-rose-50 text-rose-600 text-sm p-3 rounded-xl mb-4"><Icon name="warning" :size="17" /> {{ generalError }}</div>
+      <FormErrors :message="generalError" :errors="errors" />
       <form @submit.prevent="submit" class="space-y-4" novalidate>
         <div>
           <label class="field-label">Nombre <span class="field-req">*</span></label>

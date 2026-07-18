@@ -17,11 +17,11 @@ class AuthenticateService
     {
         $token = $request->bearerToken();
         if (!$token) {
-            return response()->json(['message' => 'Unauthenticated'], 401);
+            return response()->json(['message' => 'Tu sesión expiró. Vuelve a iniciar sesión.'], 401);
         }
         $user = $this->auth->verify($token);
         if (!$user) {
-            return response()->json(['message' => 'Unauthenticated'], 401);
+            return response()->json(['message' => 'Tu sesión expiró. Vuelve a iniciar sesión.'], 401);
         }
         $request->attributes->set('auth_user', $user);
         return $next($request);

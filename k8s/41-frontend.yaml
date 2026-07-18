@@ -1,0 +1,27 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata: { name: frontend, namespace: recloset }
+spec:
+  replicas: 2
+  selector: { matchLabels: { app: frontend } }
+  template:
+    metadata: { labels: { app: frontend } }
+    spec:
+      containers:
+        - name: frontend
+          image: recloset/frontend:latest
+          ports: [{ containerPort: 5173 }]
+          env:
+            - { name: VITE_API_URL, value: "http://localhost:8080/api" }
+            - { name: VITE_REVERB_HOST, value: "localhost" }
+            - { name: VITE_REVERB_PORT, value: "8080" }
+            - { name: VITE_REVERB_SCHEME, value: "http" }
+            - { name: VITE_REVERB_APP_KEY, value: "recloset-key" }
+---
+apiVersion: v1
+kind: Service
+metadata: { name: frontend, namespace: recloset }
+spec:
+  type: LoadBalancer
+  selector: { app: frontend }
+  ports: [{ port: 5173, targetPort: 5173 }]

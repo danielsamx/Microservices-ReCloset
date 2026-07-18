@@ -1,0 +1,11 @@
+.env
+*/.env
+**/vendor/
+**/node_modules/
+**/storage/*.key
+**/storage/logs/*.log
+**/storage/framework/cache/*
+**/storage/framework/sessions/*
+**/storage/framework/views/*
+frontend/dist/
+.DS_Store

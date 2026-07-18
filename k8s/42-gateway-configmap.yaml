@@ -1,0 +1,5 @@
+# Generate with:
+#   kubectl -n recloset create configmap gateway-nginx \
+#     --from-file=default.conf=gateway/nginx.conf \
+#     --from-file=proxy_common.conf=gateway/proxy_common.conf
+# (kept as a note so the two files remain the single source of truth)

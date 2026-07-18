@@ -1,0 +1,24 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: recloset-config
+  namespace: recloset
+data:
+  APP_ENV: "production"
+  APP_DEBUG: "false"
+  LOG_CHANNEL: "stderr"
+  LOG_LEVEL: "info"
+  DB_CONNECTION: "pgsql"
+  DB_PORT: "5432"
+  DB_USERNAME: "recloset"
+  AUTH_SERVICE_URL: "http://auth-service:8000"
+  ITEM_SERVICE_URL: "http://item-service:8000"
+  MEDIA_SERVICE_URL: "http://media-service:8000"
+  REVERB_APP_ID: "recloset"
+  REVERB_APP_KEY: "recloset-key"
+  REVERB_HOST: "reverb"
+  REVERB_PORT: "8080"
+  REVERB_SCHEME: "http"
+  BROADCAST_CONNECTION: "reverb"
+  MEDIA_MAX_FILE_SIZE: "52428800"
+  MEDIA_STORAGE_ROOT: "/var/blobstore"

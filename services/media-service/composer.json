@@ -1,0 +1,31 @@
+{
+    "name": "recloset/media-service",
+    "type": "project",
+    "description": "ReCloset self-hosted Media/Blob storage microservice",
+    "require": {
+        "php": "^8.3",
+        "laravel/framework": "^11.0",
+        "ramsey/uuid": "^4.7"
+    },
+    "autoload": {
+        "psr-4": {
+            "App\\": "app/",
+            "Database\\Factories\\": "database/factories/",
+            "Database\\Seeders\\": "database/seeders/"
+        }
+    },
+    "config": {
+        "optimize-autoloader": true,
+        "sort-packages": true,
+        "allow-plugins": {
+            "php-http/discovery": true
+        },
+        "policy": {
+            "advisories": {
+                "block": false
+            }
+        }
+    },
+    "minimum-stability": "stable",
+    "prefer-stable": true
+}

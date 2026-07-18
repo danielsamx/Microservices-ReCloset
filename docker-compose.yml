@@ -1,0 +1,276 @@
+# ============================================================
+# ReCloset - Microservices stack (local development)
+# Start: docker compose up -d --build
+# ============================================================
+
+x-laravel-common: &laravel-common
+  restart: unless-stopped
+  networks: [recloset]
+
+services:
+  # ---------------------------------------------------------
+  # API GATEWAY (Design Pattern: API Gateway)
+  # Single entry point. Routes /api/auth, /api/items, /api/chat,
+  # /api/media to the right service, and proxies the Reverb WS.
+  # ---------------------------------------------------------
+  gateway:
+    image: nginx:1.27-alpine
+    restart: unless-stopped
+    ports:
+      - "${GATEWAY_PORT:-8080}:80"
+    volumes:
+      - ./gateway/nginx.conf:/etc/nginx/conf.d/default.conf:ro
+      - ./gateway/proxy_common.conf:/etc/nginx/proxy_common.conf:ro
+    depends_on:
+      auth-service:   { condition: service_healthy }
+      item-service:   { condition: service_healthy }
+      chat-service:   { condition: service_healthy }
+      media-service:  { condition: service_healthy }
+    networks: [recloset]
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost/health"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+
+  # ---------------------------------------------------------
+  # FRONTEND (Vue 3 + Vite)
+  # ---------------------------------------------------------
+  frontend:
+    build: ./frontend
+    restart: unless-stopped
+    ports:
+      - "${FRONTEND_PORT:-5173}:5173"
+    environment:
+      VITE_API_URL: ${VITE_API_URL}
+      VITE_REVERB_HOST: ${VITE_REVERB_HOST}
+      VITE_REVERB_PORT: ${VITE_REVERB_PORT}
+      VITE_REVERB_SCHEME: ${VITE_REVERB_SCHEME}
+      VITE_REVERB_APP_KEY: ${VITE_REVERB_APP_KEY}
+    networks: [recloset]
+
+  # =========================================================
+  # AUTH SERVICE
+  # =========================================================
+  auth-service:
+    <<: *laravel-common
+    build: ./services/auth-service
+    environment:
+      APP_KEY: ${AUTH_APP_KEY}
+      APP_ENV: ${APP_ENV}
+      APP_DEBUG: ${APP_DEBUG}
+      LOG_CHANNEL: ${LOG_CHANNEL}
+      LOG_LEVEL: ${LOG_LEVEL}
+      DB_CONNECTION: pgsql
+      DB_HOST: auth-db
+      DB_PORT: 5432
+      DB_DATABASE: ${AUTH_DB_DATABASE}
+      DB_USERNAME: ${AUTH_DB_USERNAME}
+      DB_PASSWORD: ${AUTH_DB_PASSWORD}
+      INTERNAL_SERVICE_TOKEN: ${INTERNAL_SERVICE_TOKEN}
+    depends_on:
+      auth-db: { condition: service_healthy }
+    healthcheck:
+      test: ["CMD", "php", "-r", "exit(@file_get_contents('http://127.0.0.1:8000/health')?0:1);"]
+      interval: 15s
+      timeout: 5s
+      retries: 10
+
+  auth-db:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${AUTH_DB_DATABASE}
+      POSTGRES_USER: ${AUTH_DB_USERNAME}
+      POSTGRES_PASSWORD: ${AUTH_DB_PASSWORD}
+    volumes:
+      - auth-db-data:/var/lib/postgresql/data
+    networks: [recloset]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${AUTH_DB_USERNAME} -d ${AUTH_DB_DATABASE}"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  # =========================================================
+  # ITEM SERVICE
+  # =========================================================
+  item-service:
+    <<: *laravel-common
+    build: ./services/item-service
+    environment:
+      APP_KEY: ${ITEM_APP_KEY}
+      APP_ENV: ${APP_ENV}
+      APP_DEBUG: ${APP_DEBUG}
+      LOG_CHANNEL: ${LOG_CHANNEL}
+      LOG_LEVEL: ${LOG_LEVEL}
+      DB_CONNECTION: pgsql
+      DB_HOST: item-db
+      DB_PORT: 5432
+      DB_DATABASE: ${ITEM_DB_DATABASE}
+      DB_USERNAME: ${ITEM_DB_USERNAME}
+      DB_PASSWORD: ${ITEM_DB_PASSWORD}
+      AUTH_SERVICE_URL: http://auth-service:8000
+      MEDIA_SERVICE_URL: http://media-service:8000
+      INTERNAL_SERVICE_TOKEN: ${INTERNAL_SERVICE_TOKEN}
+    depends_on:
+      item-db: { condition: service_healthy }
+    healthcheck:
+      test: ["CMD", "php", "-r", "exit(@file_get_contents('http://127.0.0.1:8000/health')?0:1);"]
+      interval: 15s
+      timeout: 5s
+      retries: 10
+
+  item-db:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${ITEM_DB_DATABASE}
+      POSTGRES_USER: ${ITEM_DB_USERNAME}
+      POSTGRES_PASSWORD: ${ITEM_DB_PASSWORD}
+    volumes:
+      - item-db-data:/var/lib/postgresql/data
+    networks: [recloset]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${ITEM_DB_USERNAME} -d ${ITEM_DB_DATABASE}"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  # =========================================================
+  # CHAT SERVICE (+ Notifications)
+  # =========================================================
+  chat-service:
+    <<: *laravel-common
+    build: ./services/chat-service
+    environment: &chat-env
+      APP_KEY: ${CHAT_APP_KEY}
+      APP_ENV: ${APP_ENV}
+      APP_DEBUG: ${APP_DEBUG}
+      LOG_CHANNEL: ${LOG_CHANNEL}
+      LOG_LEVEL: ${LOG_LEVEL}
+      DB_CONNECTION: pgsql
+      DB_HOST: chat-db
+      DB_PORT: 5432
+      DB_DATABASE: ${CHAT_DB_DATABASE}
+      DB_USERNAME: ${CHAT_DB_USERNAME}
+      DB_PASSWORD: ${CHAT_DB_PASSWORD}
+      AUTH_SERVICE_URL: http://auth-service:8000
+      ITEM_SERVICE_URL: http://item-service:8000
+      INTERNAL_SERVICE_TOKEN: ${INTERNAL_SERVICE_TOKEN}
+      BROADCAST_CONNECTION: reverb
+      REVERB_APP_ID: ${REVERB_APP_ID}
+      REVERB_APP_KEY: ${REVERB_APP_KEY}
+      REVERB_APP_SECRET: ${REVERB_APP_SECRET}
+      REVERB_HOST: reverb
+      REVERB_PORT: 8080
+      REVERB_SCHEME: http
+    depends_on:
+      chat-db: { condition: service_healthy }
+    healthcheck:
+      test: ["CMD", "php", "-r", "exit(@file_get_contents('http://127.0.0.1:8000/health')?0:1);"]
+      interval: 15s
+      timeout: 5s
+      retries: 10
+
+  # Reverb WebSocket server - same image, different command
+  reverb:
+    <<: *laravel-common
+    build: ./services/chat-service
+    command: ["php", "artisan", "reverb:start", "--host=0.0.0.0", "--port=8080"]
+    environment: *chat-env
+    depends_on:
+      chat-db: { condition: service_healthy }
+    healthcheck:
+      test: ["CMD-SHELL", "nc -z 127.0.0.1 8080 || exit 1"]
+      interval: 15s
+      timeout: 5s
+      retries: 10
+
+  chat-db:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${CHAT_DB_DATABASE}
+      POSTGRES_USER: ${CHAT_DB_USERNAME}
+      POSTGRES_PASSWORD: ${CHAT_DB_PASSWORD}
+    volumes:
+      - chat-db-data:/var/lib/postgresql/data
+    networks: [recloset]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${CHAT_DB_USERNAME} -d ${CHAT_DB_DATABASE}"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  # =========================================================
+  # MEDIA STORAGE SERVICE (self-hosted blob store on a volume)
+  # =========================================================
+  media-service:
+    <<: *laravel-common
+    build: ./services/media-service
+    environment:
+      APP_KEY: ${MEDIA_APP_KEY}
+      APP_ENV: ${APP_ENV}
+      APP_DEBUG: ${APP_DEBUG}
+      LOG_CHANNEL: ${LOG_CHANNEL}
+      LOG_LEVEL: ${LOG_LEVEL}
+      DB_CONNECTION: pgsql
+      DB_HOST: media-db
+      DB_PORT: 5432
+      DB_DATABASE: ${MEDIA_DB_DATABASE}
+      DB_USERNAME: ${MEDIA_DB_USERNAME}
+      DB_PASSWORD: ${MEDIA_DB_PASSWORD}
+      INTERNAL_SERVICE_TOKEN: ${INTERNAL_SERVICE_TOKEN}
+      MEDIA_MAX_FILE_SIZE: ${MEDIA_MAX_FILE_SIZE}
+      MEDIA_STORAGE_ROOT: /var/blobstore
+    volumes:
+      - media-blob-data:/var/blobstore     # <-- persistent object/blob store
+    depends_on:
+      media-db: { condition: service_healthy }
+    healthcheck:
+      test: ["CMD", "php", "-r", "exit(@file_get_contents('http://127.0.0.1:8000/health')?0:1);"]
+      interval: 15s
+      timeout: 5s
+      retries: 10
+
+  media-db:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${MEDIA_DB_DATABASE}
+      POSTGRES_USER: ${MEDIA_DB_USERNAME}
+      POSTGRES_PASSWORD: ${MEDIA_DB_PASSWORD}
+    volumes:
+      - media-db-data:/var/lib/postgresql/data
+    networks: [recloset]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${MEDIA_DB_USERNAME} -d ${MEDIA_DB_DATABASE}"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  # =========================================================
+  # OBSERVABILITY (single tool: Prometheus)
+  # =========================================================
+  prometheus:
+    image: prom/prometheus:v2.54.1
+    restart: unless-stopped
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./monitoring/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - prometheus-data:/prometheus
+    networks: [recloset]
+
+networks:
+  recloset:
+    driver: bridge
+
+volumes:
+  auth-db-data:
+  item-db-data:
+  chat-db-data:
+  media-db-data:
+  media-blob-data:      # object/blob store persistence - survives container recreation
+  prometheus-data:

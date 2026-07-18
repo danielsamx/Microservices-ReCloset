@@ -1,0 +1,35 @@
+# ReCloset - single observability tool: Prometheus
+# Scrapes /metrics (Prometheus text format) and probes /health of every service.
+global:
+  scrape_interval: 15s
+  scrape_timeout: 10s
+
+scrape_configs:
+  - job_name: gateway
+    metrics_path: /health
+    static_configs:
+      - targets: ['gateway:80']
+
+  - job_name: auth-service
+    metrics_path: /metrics
+    static_configs:
+      - targets: ['auth-service:8000']
+        labels: { service: auth }
+
+  - job_name: item-service
+    metrics_path: /metrics
+    static_configs:
+      - targets: ['item-service:8000']
+        labels: { service: item }
+
+  - job_name: chat-service
+    metrics_path: /metrics
+    static_configs:
+      - targets: ['chat-service:8000']
+        labels: { service: chat }
+
+  - job_name: media-service
+    metrics_path: /metrics
+    static_configs:
+      - targets: ['media-service:8000']
+        labels: { service: media }

@@ -4,7 +4,7 @@ import { getEcho } from '../lib/echo'
 import { useAuth } from './auth'
 
 export const useNotifications = defineStore('notifications', {
-  state: () => ({ items: [], unread: 0, subscribed: false }),
+  state: () => ({ items: [], unread: 0, subscribed: false, showModal: false }),
   actions: {
     async load() {
       const [{ data: list }, { data: c }] = await Promise.all([

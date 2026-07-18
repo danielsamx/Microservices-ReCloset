@@ -4,6 +4,7 @@ import { useRoute, useRouter } from 'vue-router'
 import api from '../lib/api'
 import { getEcho } from '../lib/echo'
 import { mediaUrl } from '../lib/media'
+import { timeAgo, clockTime, dayLabel, dayKey } from '../lib/time'
 import { useAuth } from '../store/auth'
 import { useToasts } from '../store/toasts'
 import EmptyState from '../components/ui/EmptyState.vue'
@@ -17,6 +18,19 @@ const conversations = ref([]); const active = ref(null); const messages = ref([]
 const draft = ref(''); const loadingList = ref(true); const loadingThread = ref(false); const sending = ref(false)
 const channel = ref(null); const scroller = ref(null)
 const confirm = ref({ open: false, id: null, loading: false })
+
+const mine = (m) => m.sender_id === auth.user.id
+function showDay(i) {
+  if (i === 0) return true
+  return dayKey(messages.value[i].created_at) !== dayKey(messages.value[i - 1].created_at)
+}
+function endsGroup(i) {
+  const cur = messages.value[i], next = messages.value[i + 1]
+  if (!next) return true
+  if (next.sender_id !== cur.sender_id) return true
+  if (dayKey(next.created_at) !== dayKey(cur.created_at)) return true
+  return (new Date(next.created_at) - new Date(cur.created_at)) > 5 * 60 * 1000
+}
 
 async function loadList() {
   loadingList.value = true
@@ -61,73 +75,105 @@ async function doRemove() {
   } catch (e) { toasts.error('No se pudo eliminar'); confirm.value.loading = false }
 }
 async function scrollDown() { await nextTick(); if (scroller.value) scroller.value.scrollTop = scroller.value.scrollHeight }
+
 onMounted(async () => { await loadList(); if (route.params.id) openThread(Number(route.params.id)) })
 watch(() => route.params.id, (id) => { if (id) openThread(Number(id)); else active.value = null })
 onBeforeUnmount(() => { if (channel.value) getEcho().leave(`conversation.${channel.value}`) })
 </script>
+
 <template>
-  <h1 class="font-display font-bold text-2xl mb-4">Mensajes</h1>
-  <div class="grid md:grid-cols-[340px_1fr] gap-4 md:h-[72vh]">
+  <div class="flex items-center justify-between mb-3">
+    <h1 class="font-display font-bold text-2xl">Mensajes</h1>
+    <router-link to="/catalog" class="btn btn-ghost btn-sm hidden sm:inline-flex"><Icon name="compass" :size="15" /> Explorar</router-link>
+  </div>
+
+  <div class="grid md:grid-cols-[330px_1fr] gap-3 h-[calc(100dvh-190px)] md:h-[calc(100dvh-170px)] min-h-[420px]">
     <aside class="card overflow-hidden flex flex-col" :class="{ 'hidden md:flex': active }">
-      <div class="p-3 border-b border-slate-100 shrink-0">
+      <div class="px-3 py-2.5 border-b border-slate-100 shrink-0 flex items-center gap-2">
         <p class="font-semibold text-slate-700 text-sm">Conversaciones</p>
+        <span v-if="conversations.length" class="badge bg-slate-100 text-slate-500 ml-auto">{{ conversations.length }}</span>
       </div>
       <div class="overflow-y-auto flex-1">
         <div v-if="loadingList" class="p-3 space-y-3">
-          <div v-for="i in 4" :key="i" class="flex gap-3 items-center">
-            <Skeleton h="2.5rem" w="2.5rem" rounded="0.6rem" /><div class="flex-1 space-y-2"><Skeleton h=".8rem" w="60%" /><Skeleton h=".7rem" w="80%" /></div>
+          <div v-for="i in 5" :key="i" class="flex gap-3 items-center">
+            <Skeleton h="2.6rem" w="2.6rem" rounded="0.7rem" />
+            <div class="flex-1 space-y-2"><Skeleton h=".8rem" w="60%" /><Skeleton h=".7rem" w="85%" /></div>
           </div>
         </div>
         <EmptyState v-else-if="!conversations.length" icon="message" title="Sin conversaciones"
-          subtitle="Contacta a un vendedor desde una prenda para empezar a chatear." />
+          subtitle="Contacta a un vendedor desde una publicación para empezar a chatear." />
         <button v-for="c in conversations" :key="c.id" @click="router.push(`/chat/${c.id}`)"
-          class="w-full text-left p-3 border-b border-slate-50 hover:bg-slate-50 flex gap-3 items-center transition"
-          :class="{ 'bg-brand-50/60': active?.id === c.id }">
+          class="w-full text-left px-3 py-2.5 border-b border-slate-50 hover:bg-slate-50 flex gap-3 items-center transition"
+          :class="{ 'bg-brand-50/70': active?.id === c.id }">
           <img v-if="c.item.thumb" :src="mediaUrl(c.item.thumb)" class="w-11 h-11 rounded-xl object-cover shrink-0" alt="" />
           <div v-else class="w-11 h-11 rounded-xl bg-slate-100 grid place-items-center shrink-0 text-slate-300"><Icon name="shirt" :size="20" /></div>
           <div class="flex-1 min-w-0">
-            <p class="text-sm font-semibold text-slate-800 truncate">{{ c.other.name || 'Usuario' }}</p>
-            <p class="text-xs text-slate-400 truncate">{{ c.item.title }}</p>
-            <p class="text-xs text-slate-500 truncate mt-0.5">{{ c.last_message || 'Sin mensajes' }}</p>
+            <div class="flex items-center gap-2">
+              <p class="text-sm font-semibold text-slate-800 truncate">{{ c.other.name || 'Usuario' }}</p>
+              <span class="ml-auto text-[11px] text-slate-400 shrink-0">{{ timeAgo(c.last_message_at) }}</span>
+            </div>
+            <p class="text-[11px] text-slate-400 truncate">{{ c.item.title }}</p>
+            <div class="flex items-center gap-2">
+              <p class="text-xs truncate" :class="c.unread ? 'text-slate-800 font-medium' : 'text-slate-500'">{{ c.last_message || 'Sin mensajes' }}</p>
+              <span v-if="c.unread" class="ml-auto bg-brand text-white text-[10px] font-bold rounded-full min-w-[18px] h-[18px] px-1 grid place-items-center shrink-0">{{ c.unread }}</span>
+            </div>
           </div>
-          <span v-if="c.unread" class="bg-brand text-white text-[10px] font-bold rounded-full min-w-[18px] h-[18px] px-1 grid place-items-center shrink-0">{{ c.unread }}</span>
         </button>
       </div>
     </aside>
 
-    <section class="card flex flex-col overflow-hidden h-[72vh] md:h-auto" :class="{ 'hidden md:flex': !active }">
+    <section class="card flex flex-col overflow-hidden" :class="{ 'hidden md:flex': !active }">
       <div v-if="!active && !loadingThread" class="flex-1 grid place-items-center">
         <EmptyState icon="messages" title="Selecciona una conversación" subtitle="Elige un chat de la lista para ver los mensajes." />
       </div>
       <template v-else>
-        <header class="p-3 border-b border-slate-100 flex items-center gap-3 shrink-0">
-          <button @click="router.push('/chat')" class="md:hidden w-9 h-9 grid place-items-center rounded-lg hover:bg-slate-100" aria-label="Volver"><Icon name="back" :size="18" /></button>
+        <header class="px-3 py-2.5 border-b border-slate-100 flex items-center gap-2.5 shrink-0">
+          <button @click="router.push('/chat')" class="md:hidden w-9 h-9 grid place-items-center rounded-lg hover:bg-slate-100 shrink-0" aria-label="Volver a conversaciones"><Icon name="back" :size="18" /></button>
           <template v-if="active">
             <span class="w-9 h-9 rounded-lg bg-brand-100 text-brand-800 grid place-items-center font-bold uppercase shrink-0">{{ active.other.name?.[0] || 'U' }}</span>
-            <div class="min-w-0">
-              <p class="font-semibold text-slate-800 truncate leading-tight">{{ active.other.name || 'Usuario' }}</p>
+            <div class="min-w-0 flex-1">
+              <p class="font-semibold text-slate-800 truncate leading-tight text-sm">{{ active.other.name || 'Usuario' }}</p>
               <router-link :to="`/items/${active.item.id}`" class="text-xs text-brand-700 hover:underline truncate block">{{ active.item.title }}</router-link>
             </div>
-            <button @click="askRemove(active.id)" class="ml-auto w-9 h-9 grid place-items-center rounded-xl text-rose-500 hover:bg-rose-50 transition shrink-0" aria-label="Eliminar conversación"><Icon name="trash" :size="18" /></button>
+            <router-link :to="`/items/${active.item.id}`" class="btn btn-soft btn-sm hidden sm:inline-flex">Ver publicación</router-link>
+            <button @click="askRemove(active.id)" class="w-9 h-9 grid place-items-center rounded-xl text-slate-400 hover:text-rose-600 hover:bg-rose-50 transition shrink-0" aria-label="Eliminar conversación"><Icon name="trash" :size="17" /></button>
           </template>
         </header>
 
-        <div ref="scroller" class="flex-1 overflow-y-auto p-4 space-y-2 bg-slate-50/50">
-          <div v-if="loadingThread" class="flex justify-center py-6"><Spinner :size="24" /></div>
+        <div ref="scroller" class="flex-1 overflow-y-auto px-3 py-3 bg-slate-50/60">
+          <div v-if="loadingThread" class="flex justify-center py-8"><Spinner :size="24" /></div>
           <template v-else>
-            <div v-if="!messages.length" class="text-center text-sm text-slate-400 py-8">Envía el primer mensaje 👋</div>
-            <div v-for="m in messages" :key="m.id" class="flex" :class="m.sender_id === auth.user.id ? 'justify-end' : 'justify-start'">
-              <div class="max-w-[78%] px-3.5 py-2 rounded-2xl text-sm shadow-soft animate-fade-up"
-                :class="m.sender_id === auth.user.id ? 'bg-brand text-white rounded-br-md' : 'bg-white text-slate-700 rounded-bl-md'">
-                {{ m.body }}
-              </div>
+            <div v-if="!messages.length" class="text-center py-10">
+              <div class="w-12 h-12 rounded-2xl bg-white border border-slate-100 grid place-items-center mx-auto text-brand-600 mb-2"><Icon name="send" :size="20" /></div>
+              <p class="text-sm text-slate-500">Envía el primer mensaje</p>
+              <p class="text-xs text-slate-400 mt-0.5">Pregunta por tallas, estado o disponibilidad.</p>
             </div>
+
+            <template v-for="(m, i) in messages" :key="m.id">
+              <div v-if="showDay(i)" class="flex justify-center my-3">
+                <span class="text-[11px] font-medium text-slate-500 bg-white border border-slate-200 rounded-full px-2.5 py-0.5">{{ dayLabel(m.created_at) }}</span>
+              </div>
+              <div class="flex animate-fade-up" :class="[mine(m) ? 'justify-end' : 'justify-start', endsGroup(i) ? 'mb-2.5' : 'mb-0.5']">
+                <div class="max-w-[80%] sm:max-w-[70%]">
+                  <div class="px-3.5 py-2 text-sm leading-relaxed break-words shadow-soft rounded-2xl"
+                    :class="[
+                      mine(m) ? 'bg-brand text-white' : 'bg-white text-slate-700 border border-slate-100',
+                      endsGroup(i) ? (mine(m) ? 'rounded-br-md' : 'rounded-bl-md') : ''
+                    ]">
+                    {{ m.body }}
+                  </div>
+                  <p v-if="endsGroup(i)" class="text-[10.5px] text-slate-400 mt-0.5 px-1" :class="mine(m) ? 'text-right' : 'text-left'">
+                    {{ clockTime(m.created_at) }}
+                  </p>
+                </div>
+              </div>
+            </template>
           </template>
         </div>
 
-        <form @submit.prevent="send" class="p-3 border-t border-slate-100 flex gap-2 shrink-0">
-          <input v-model="draft" placeholder="Escribe un mensaje…" class="input rounded-full" aria-label="Escribe un mensaje" />
-          <button class="btn btn-primary rounded-full !px-4" :disabled="sending || !draft.trim()" aria-label="Enviar mensaje">
+        <form @submit.prevent="send" class="p-2.5 border-t border-slate-100 flex items-end gap-2 shrink-0 bg-white">
+          <input v-model="draft" placeholder="Escribe un mensaje…" class="input rounded-2xl flex-1" aria-label="Escribe un mensaje" autocomplete="off" />
+          <button class="btn btn-primary rounded-2xl !px-3.5 shrink-0" :disabled="sending || !draft.trim()" aria-label="Enviar mensaje">
             <Spinner v-if="sending" :size="18" light /><Icon v-else name="send" :size="18" />
           </button>
         </form>

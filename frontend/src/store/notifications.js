@@ -4,7 +4,7 @@ import { getEcho } from '../lib/echo'
 import { useAuth } from './auth'
 
 export const useNotifications = defineStore('notifications', {
-  state: () => ({ items: [], unread: 0, subscribed: false, showModal: false }),
+  state: () => ({ items: [], unread: 0, subscribed: false }),
   actions: {
     async load() {
       const [{ data: list }, { data: c }] = await Promise.all([
@@ -22,6 +22,16 @@ export const useNotifications = defineStore('notifications', {
       await api.patch('/notifications/read-all')
       this.items.forEach((n) => (n.read_at = n.read_at || new Date().toISOString()))
       this.unread = 0
+    },
+    async remove(id) {
+      await api.delete(`/notifications/${id}`)
+      const n = this.items.find((x) => x.id === id)
+      if (n && !n.read_at) this.unread = Math.max(0, this.unread - 1)
+      this.items = this.items.filter((x) => x.id !== id)
+    },
+    async removeAll() {
+      await api.delete('/notifications')
+      this.items = []; this.unread = 0
     },
     subscribe() {
       const auth = useAuth()

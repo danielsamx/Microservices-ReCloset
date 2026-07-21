@@ -28,7 +28,7 @@ async function submit() {
       <p class="text-sm text-slate-400">Inicia sesión para continuar</p>
     </div>
     <div class="card card-pad animate-fade-up">
-      <div v-if="error" class="flex items-center gap-2 bg-rose-50 text-rose-600 text-sm p-3 rounded-xl mb-4 animate-pop">
+      <div v-if="error" class="flex items-center gap-2 bg-danger-50 text-danger-600 text-sm p-3 rounded-xl mb-4 animate-pop">
         <Icon name="warning" :size="17" class="shrink-0" />{{ error }}
       </div>
       <form @submit.prevent="submit" class="space-y-4" novalidate>

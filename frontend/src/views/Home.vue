@@ -16,7 +16,7 @@ async function load() {
 onMounted(load)
 </script>
 <template>
-  <section class="relative overflow-hidden rounded-3xl bg-gradient-to-br from-brand-700 via-brand-600 to-teal-500 text-white px-6 sm:px-10 py-10 sm:py-14 shadow-card">
+  <section class="relative overflow-hidden rounded-3xl bg-gradient-to-br from-brand-700 via-brand-600 to-brand-400 text-white px-6 sm:px-10 py-10 sm:py-14 shadow-card">
     <div class="absolute -right-16 -top-16 w-64 h-64 rounded-full bg-white/10"></div>
     <div class="absolute -left-10 -bottom-20 w-56 h-56 rounded-full bg-white/10"></div>
     <div class="relative max-w-xl animate-fade-up">

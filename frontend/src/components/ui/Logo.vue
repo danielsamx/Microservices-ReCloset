@@ -39,7 +39,7 @@ defineProps({
         stroke="currentColor" 
         stroke-width="7" 
         stroke-linecap="round"
-        class="text-teal-500"
+        class="text-brand-400"
       />
 
       <!-- Arrow Heads -->
@@ -59,7 +59,7 @@ defineProps({
         stroke-width="7" 
         stroke-linecap="round" 
         stroke-linejoin="round"
-        class="text-teal-500"
+        class="text-brand-400"
       />
 
       <!-- Hanger inside the circle -->

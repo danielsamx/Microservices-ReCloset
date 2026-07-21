@@ -3,7 +3,7 @@ import { useToasts } from '../../store/toasts'
 import Icon from './Icon.vue'
 const toasts = useToasts()
 const iconName = { success: 'success', error: 'warning', info: 'info' }
-const tint = { success: 'bg-emerald-600', error: 'bg-rose-600', info: 'bg-slate-800' }
+const tint = { success: 'bg-brand-600', error: 'bg-danger-600', info: 'bg-slate-800' }
 </script>
 <template>
   <div class="fixed z-[100] top-3 right-3 left-3 sm:left-auto flex flex-col gap-2 items-stretch sm:items-end pointer-events-none">

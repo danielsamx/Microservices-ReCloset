@@ -40,7 +40,7 @@ const active = (p) => route.path === p || (p !== '/' && route.path.startsWith(p)
           <span class="relative">
             <Icon name="user" :size="20" />
             <span v-if="unread > 0"
-              class="absolute -top-1 -right-1.5 min-w-[14px] h-[14px] px-1 bg-rose-500 text-white text-[9px] font-bold rounded-full grid place-items-center">
+              class="absolute -top-1 -right-1.5 min-w-[14px] h-[14px] px-1 bg-danger-500 text-white text-[9px] font-bold rounded-full grid place-items-center">
               {{ unread > 9 ? '9+' : unread }}
             </span>
           </span>
@@ -63,6 +63,6 @@ const active = (p) => route.path === p || (p !== '/' && route.path.startsWith(p)
 <style scoped>
 .tab { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px;
   min-height: 52px; padding: .45rem .15rem .5rem; color: #94a3b8; font-size: .64rem; font-weight: 500; }
-.tab-on { color: #0f766e; }
+.tab-on { color: #386641; }
 .lbl { line-height: 1; max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 </style>

@@ -97,6 +97,6 @@ function setSize(id) { filters.value.size_id = filters.value.size_id === id ? ''
 <style scoped>
 .size-filter { min-width: 2.2rem; padding: .3rem .55rem; border-radius: .55rem; font-size: .78rem; font-weight: 600;
   border: 1.5px solid #e2e8f0; background: #fff; color: #475569; transition: all .15s; }
-.size-filter:hover { border-color: #99f6e4; color: #0f766e; }
-.size-filter-on { background: #0f766e; border-color: #0f766e; color: #fff; }
+.size-filter:hover { border-color: #cfe0a8; color: #386641; }
+.size-filter-on { background: #386641; border-color: #386641; color: #fff; }
 </style>

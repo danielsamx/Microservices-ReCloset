@@ -54,9 +54,9 @@ async function submit() {
           <label class="field-label">Contraseña <span class="field-req">*</span></label>
           <input v-model="form.password" type="password" required placeholder="Crea una contraseña" class="input" :class="{ 'input-error': errors.password }" autocomplete="new-password" />
           <div v-if="form.password" class="flex flex-wrap gap-x-3 gap-y-1 mt-2 text-[11px]">
-            <span class="inline-flex items-center gap-1" :class="rules.len ? 'text-emerald-600' : 'text-slate-400'"><Icon :name="rules.len ? 'check' : 'info'" :size="12" /> 8+ caracteres</span>
-            <span class="inline-flex items-center gap-1" :class="rules.case ? 'text-emerald-600' : 'text-slate-400'"><Icon :name="rules.case ? 'check' : 'info'" :size="12" /> Mayús y minús</span>
-            <span class="inline-flex items-center gap-1" :class="rules.num ? 'text-emerald-600' : 'text-slate-400'"><Icon :name="rules.num ? 'check' : 'info'" :size="12" /> Un número</span>
+            <span class="inline-flex items-center gap-1" :class="rules.len ? 'text-brand-600' : 'text-slate-400'"><Icon :name="rules.len ? 'check' : 'info'" :size="12" /> 8+ caracteres</span>
+            <span class="inline-flex items-center gap-1" :class="rules.case ? 'text-brand-600' : 'text-slate-400'"><Icon :name="rules.case ? 'check' : 'info'" :size="12" /> Mayús y minús</span>
+            <span class="inline-flex items-center gap-1" :class="rules.num ? 'text-brand-600' : 'text-slate-400'"><Icon :name="rules.num ? 'check' : 'info'" :size="12" /> Un número</span>
           </div>
           <p v-if="errors.password" class="field-err"><Icon name="warning" :size="13" /> {{ errors.password[0] }}</p>
         </div>

@@ -3,39 +3,47 @@
 @tailwind utilities;
 
 /* ============================================================
-   ReCloset — Sistema de diseño
-   - @layer base: estilos globales
-   - @layer components: componentes reutilizables (las utilidades
-     de Tailwind pueden sobrescribirlos, p.ej. `input rounded-2xl`)
-   - CSS plano al final: keyframes y clases de transición de Vue
-     (no deben depender del escaneo de contenido)
+   ReCloset — Sistema de diseño (verde corporativo)
+   Paleta: #386641 bosque · #6a994e verde · #a7c957 lima
+           #f2e8cf crema · #bc4749 rojo
    ============================================================ */
 
 @layer base {
   :root {
-    --brand: #0f766e;
-    --brand-dark: #115e59;
-    --ring: rgba(13, 148, 136, .35);
+    --brand: #386641;
+    --brand-dark: #2c5133;
+    --brand-500: #6a994e;
+    --lime: #a7c957;
+    --cream: #f2e8cf;
+    --danger: #bc4749;
+    --ring: rgba(56, 102, 65, .32);
   }
 
   * { -webkit-tap-highlight-color: transparent; }
-  html { scroll-behavior: smooth; }
+  html { scroll-behavior: smooth; max-width: 100%; overflow-x: hidden; }
 
   body {
     font-family: 'Inter', system-ui, sans-serif;
-    color: #0f172a;
+    color: #1a2e21;
     background:
-      radial-gradient(1200px 600px at 100% -10%, #ecfdf5 0%, rgba(236,253,245,0) 55%),
-      radial-gradient(1000px 500px at -10% 0%, #f0f9ff 0%, rgba(240,249,255,0) 50%),
-      #f6f7f9;
+      radial-gradient(1200px 620px at 100% -12%, #f2e8cf 0%, rgba(242,232,207,0) 55%),
+      radial-gradient(1000px 520px at -8% 0%, #e4eecd 0%, rgba(228,238,205,0) 52%),
+      #f7f8f3;
     min-height: 100vh;
+    max-width: 100%;
+    overflow-x: hidden;
   }
 
   h1, h2, h3 { font-family: 'Plus Jakarta Sans', 'Inter', sans-serif; }
 
+  img, video, canvas, svg { max-width: 100%; height: auto; }
+  img.object-cover, video.object-cover { height: 100%; }
+  @media (max-width: 640px) { input, select, textarea { font-size: 16px; } }
+  h1, h2, h3, p, span, a { overflow-wrap: break-word; }
+
   ::-webkit-scrollbar { width: 10px; height: 10px; }
-  ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 999px; border: 2px solid transparent; background-clip: content-box; }
-  ::-webkit-scrollbar-thumb:hover { background: #94a3b8; background-clip: content-box; }
+  ::-webkit-scrollbar-thumb { background: #cbd5c4; border-radius: 999px; border: 2px solid transparent; background-clip: content-box; }
+  ::-webkit-scrollbar-thumb:hover { background: #a7b79c; background-clip: content-box; }
 
   :focus-visible { outline: none; box-shadow: 0 0 0 3px var(--ring); border-radius: .6rem; }
 }
@@ -48,106 +56,70 @@
     cursor: pointer; border: 1px solid transparent; white-space: nowrap; user-select: none; }
   .btn:active { transform: translateY(1px) scale(.99); }
   .btn:disabled { opacity: .55; cursor: not-allowed; }
-  .btn-primary { background: var(--brand); color: #fff; box-shadow: 0 6px 16px -6px rgba(13,148,136,.6); }
-  .btn-primary:hover:not(:disabled) { background: var(--brand-dark); box-shadow: 0 10px 22px -8px rgba(13,148,136,.7); }
-  .btn-ghost { background: #fff; color: #0f172a; border-color: #e2e8f0; }
-  .btn-ghost:hover:not(:disabled) { background: #f8fafc; border-color: #cbd5e1; }
-  .btn-soft { background: #f1f5f9; color: #0f172a; }
-  .btn-soft:hover:not(:disabled) { background: #e2e8f0; }
-  .btn-danger { background: #fff; color: #e11d48; border-color: #fecdd3; }
-  .btn-danger:hover:not(:disabled) { background: #fff1f2; }
+  .btn-primary { background: var(--brand); color: #fff; box-shadow: 0 6px 16px -6px rgba(56,102,65,.55); }
+  .btn-primary:hover:not(:disabled) { background: var(--brand-dark); box-shadow: 0 10px 22px -8px rgba(56,102,65,.65); }
+  .btn-ghost { background: #fff; color: #1a2e21; border-color: #e2e6dd; }
+  .btn-ghost:hover:not(:disabled) { background: #f7f8f3; border-color: #cbd5c4; }
+  .btn-soft { background: #eef2e7; color: #2c5133; }
+  .btn-soft:hover:not(:disabled) { background: #e2ead4; }
+  .btn-danger { background: #fff; color: var(--danger); border-color: #f6d7d7; }
+  .btn-danger:hover:not(:disabled) { background: #fbecec; }
   .btn-block { width: 100%; }
   .btn-sm { padding: .45rem .8rem; font-size: .82rem; border-radius: .65rem; }
   .btn-lg { padding: .85rem 1.4rem; font-size: 1rem; }
 
+  @media (pointer: coarse) { .btn { min-height: 44px; } .btn-sm { min-height: 38px; } }
+
   /* ---------- Cards ---------- */
-  .card { background: #fff; border: 1px solid #eef0f3; border-radius: 1.125rem;
-    box-shadow: 0 1px 2px rgba(15,23,42,.04), 0 4px 16px -4px rgba(15,23,42,.08); }
+  .card { background: #fff; border: 1px solid #eaeee3; border-radius: 1.125rem;
+    box-shadow: 0 1px 2px rgba(24,46,33,.05), 0 4px 16px -4px rgba(24,46,33,.10); }
   .card-pad { padding: 1.25rem; }
 
   /* ---------- Formularios ---------- */
-  .field-label { display: block; font-size: .8rem; font-weight: 600; color: #334155; margin-bottom: .35rem; }
-  .field-req { color: #e11d48; }
-  .input { width: 100%; background: #fff; border: 1px solid #e2e8f0; border-radius: .8rem;
-    padding: .65rem .85rem; font-size: .92rem; color: #0f172a; transition: border .15s, box-shadow .15s; }
-  .input::placeholder { color: #94a3b8; }
-  .input:hover { border-color: #cbd5e1; }
+  .field-label { display: block; font-size: .8rem; font-weight: 600; color: #33413a; margin-bottom: .35rem; }
+  .field-req { color: var(--danger); }
+  .input { width: 100%; background: #fff; border: 1px solid #dbe0d3; border-radius: .8rem;
+    padding: .65rem .85rem; font-size: .92rem; color: #1a2e21; transition: border .15s, box-shadow .15s; }
+  .input::placeholder { color: #8a978c; }
+  .input:hover { border-color: #b9c4ac; }
   .input:focus { border-color: var(--brand); box-shadow: 0 0 0 3px var(--ring); outline: none; }
-  .input-error { border-color: #f43f5e; }
-  .input-error:focus { box-shadow: 0 0 0 3px rgba(244,63,94,.25); }
-  .field-help { font-size: .75rem; color: #94a3b8; margin-top: .3rem; }
-  .field-err { font-size: .75rem; color: #e11d48; margin-top: .3rem; display: flex; gap: .25rem; align-items: center; }
+  .input-error { border-color: var(--danger); }
+  .input-error:focus { box-shadow: 0 0 0 3px rgba(188,71,73,.22); }
+  .field-help { font-size: .75rem; color: #8a978c; margin-top: .3rem; }
+  .field-err { font-size: .75rem; color: var(--danger); margin-top: .3rem; display: flex; gap: .25rem; align-items: center; }
 
   /* ---------- Badges ---------- */
   .badge { display: inline-flex; align-items: center; gap: .3rem; font-size: .72rem; font-weight: 600;
     padding: .2rem .55rem; border-radius: 999px; line-height: 1; }
-  .badge-available { background: #dcfce7; color: #15803d; }
-  .badge-reserved { background: #fef3c7; color: #b45309; }
-  .badge-sold { background: #e2e8f0; color: #475569; }
+  .badge-available { background: #e4eecd; color: #386641; }
+  .badge-reserved { background: #f7ecc9; color: #8a6d1e; }
+  .badge-sold { background: #e7e6df; color: #5c6b60; }
 
   /* ---------- Skeletons ---------- */
-  .skeleton { position: relative; overflow: hidden; background: #eef1f5; border-radius: .7rem; }
+  .skeleton { position: relative; overflow: hidden; background: #eceee6; border-radius: .7rem; }
   .skeleton::after { content: ''; position: absolute; inset: 0;
     background: linear-gradient(90deg, transparent, rgba(255,255,255,.65), transparent);
     transform: translateX(-100%); animation: shimmer 1.4s infinite; }
 }
 
-/* ============================================================
-   CSS plano (fuera de @layer): nunca se purga.
-   Necesario para las clases que genera Vue en <transition>.
-   ============================================================ */
+/* ---------- Animaciones (CSS plano, nunca se purga) ---------- */
 @keyframes shimmer { 100% { transform: translateX(100%); } }
 @keyframes fade-up { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
 @keyframes fade-in { from { opacity: 0; } to { opacity: 1; } }
 @keyframes pop { 0% { opacity: 0; transform: scale(.96); } 100% { opacity: 1; transform: scale(1); } }
 @keyframes toast-in { from { opacity: 0; transform: translateY(-10px) scale(.98); } to { opacity: 1; transform: none; } }
-
 .animate-fade-up { animation: fade-up .4s ease both; }
 .animate-fade-in { animation: fade-in .3s ease both; }
 .animate-pop { animation: pop .18s ease both; }
 
-/* Transiciones de router y modales (clases generadas por Vue) */
 .route-enter-active { transition: opacity .25s ease, transform .25s ease; }
 .route-leave-active { transition: opacity .12s ease; }
 .route-enter-from { opacity: 0; transform: translateY(6px); }
 .route-leave-to { opacity: 0; }
-
 .modal-enter-active, .modal-leave-active { transition: opacity .2s ease; }
 .modal-enter-from, .modal-leave-to { opacity: 0; }
 .modal-panel-enter-active { animation: pop .2s ease both; }
 
 @media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after {
-    animation-duration: .001ms !important;
-    transition-duration: .001ms !important;
-    scroll-behavior: auto !important;
-  }
-}
-
-/* ============================================================
-   Reglas responsive globales
-   ============================================================ */
-@layer base {
-  /* Nunca scroll horizontal por desbordes accidentales */
-  html, body { max-width: 100%; overflow-x: hidden; }
-
-  /* Media siempre fluida dentro de su contenedor */
-  img, video, canvas, svg { max-width: 100%; height: auto; }
-  img.object-cover, video.object-cover { height: 100%; }
-
-  /* Evita que el zoom automático de iOS dispare al enfocar inputs (<16px) */
-  @media (max-width: 640px) {
-    input, select, textarea { font-size: 16px; }
-  }
-
-  /* Palabras muy largas no rompen el layout */
-  h1, h2, h3, p, span, a { overflow-wrap: break-word; }
-}
-
-@layer components {
-  /* Área táctil mínima cómoda en móvil (WCAG ~44px) */
-  @media (pointer: coarse) {
-    .btn { min-height: 44px; }
-    .btn-sm { min-height: 38px; }
-  }
+  *, *::before, *::after { animation-duration: .001ms !important; transition-duration: .001ms !important; scroll-behavior: auto !important; }
 }

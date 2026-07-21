@@ -131,7 +131,7 @@ async function submit() {
         <div v-if="!editing" class="border-t border-slate-100 pt-4">
           <label class="field-label">Fotos / videos <span class="field-req">*</span> <span class="font-normal text-slate-400">(1 a 8)</span></label>
           <label class="flex flex-col items-center border-2 border-dashed rounded-xl p-5 text-center cursor-pointer transition hover:border-brand hover:bg-brand-50/40"
-            :class="errors['files'] ? 'border-rose-300' : 'border-slate-200'">
+            :class="errors['files'] ? 'border-danger-300' : 'border-slate-200'">
             <input type="file" multiple accept="image/*,video/mp4,video/webm" @change="onFiles" class="hidden" />
             <Icon name="upload" :size="26" class="text-brand-600" />
             <p class="text-sm text-slate-500 mt-1">Toca para seleccionar archivos</p>

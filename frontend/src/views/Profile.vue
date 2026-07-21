@@ -17,7 +17,7 @@ async function logout() { loggingOut.value = true; await auth.logout(); router.p
 <template>
   <div class="max-w-md mx-auto">
     <div class="card overflow-hidden animate-fade-up">
-      <div class="h-24 bg-gradient-to-br from-brand-600 to-teal-500"></div>
+      <div class="h-24 bg-gradient-to-br from-brand-600 to-brand-400"></div>
       <div class="px-5 pb-5 -mt-10">
         <div class="w-20 h-20 rounded-2xl bg-white shadow-card grid place-items-center text-3xl font-display font-extrabold text-brand-700 uppercase border-4 border-white">
           {{ auth.user?.name?.[0] || 'U' }}

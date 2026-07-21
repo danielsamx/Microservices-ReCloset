@@ -79,7 +79,7 @@ async function doConfirm() {
           </div>
         </button>
         <button @click.stop="askDeleteOne(n.id)"
-          class="w-8 h-8 grid place-items-center rounded-lg text-slate-300 hover:text-rose-600 hover:bg-rose-50 transition shrink-0
+          class="w-8 h-8 grid place-items-center rounded-lg text-slate-300 hover:text-danger-600 hover:bg-danger-50 transition shrink-0
                  opacity-100 md:opacity-0 md:group-hover:opacity-100 md:focus:opacity-100"
           aria-label="Eliminar notificación">
           <Icon name="trash" :size="16" />

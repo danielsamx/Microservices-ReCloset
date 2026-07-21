@@ -15,7 +15,7 @@ const items = ref([]); const summary = ref({}); const loading = ref(true); const
 const confirm = ref({ open: false, item: null, loading: false })
 const stats = [
   { k: 'total', l: 'Total', c: 'text-slate-800', icon: 'bag' },
-  { k: 'available', l: 'Disponibles', c: 'text-emerald-600', icon: 'check' },
+  { k: 'available', l: 'Disponibles', c: 'text-brand-600', icon: 'check' },
   { k: 'reserved', l: 'Reservadas', c: 'text-amber-600', icon: 'tag' },
   { k: 'sold', l: 'Vendidas', c: 'text-slate-500', icon: 'sold' },
 ]
@@ -112,7 +112,7 @@ async function doRemove() {
           <Icon name="edit" :size="15" /><span class="hidden sm:inline">Editar</span>
         </router-link>
         <button @click="askRemove(it)"
-          class="w-10 h-10 sm:w-9 sm:h-9 grid place-items-center rounded-xl text-slate-400 hover:text-rose-600 hover:bg-rose-50 transition shrink-0"
+          class="w-10 h-10 sm:w-9 sm:h-9 grid place-items-center rounded-xl text-slate-400 hover:text-danger-600 hover:bg-danger-50 transition shrink-0"
           :aria-label="`Eliminar ${it.name}`"><Icon name="trash" :size="17" /></button>
       </div>
     </article>

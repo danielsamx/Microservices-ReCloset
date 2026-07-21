@@ -136,7 +136,7 @@ onBeforeUnmount(() => { if (channel.value) getEcho().leave(`conversation.${chann
               <router-link :to="`/items/${active.item.id}`" class="text-xs text-brand-700 hover:underline truncate block">{{ active.item.title }}</router-link>
             </div>
             <router-link :to="`/items/${active.item.id}`" class="btn btn-soft btn-sm hidden sm:inline-flex">Ver publicación</router-link>
-            <button @click="askRemove(active.id)" class="w-9 h-9 grid place-items-center rounded-xl text-slate-400 hover:text-rose-600 hover:bg-rose-50 transition shrink-0" aria-label="Eliminar conversación"><Icon name="trash" :size="17" /></button>
+            <button @click="askRemove(active.id)" class="w-9 h-9 grid place-items-center rounded-xl text-slate-400 hover:text-danger-600 hover:bg-danger-50 transition shrink-0" aria-label="Eliminar conversación"><Icon name="trash" :size="17" /></button>
           </template>
         </header>
 

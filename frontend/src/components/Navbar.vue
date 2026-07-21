@@ -57,7 +57,7 @@ onBeforeUnmount(() => document.removeEventListener('click', close))
             :aria-label="`Notificaciones${unread ? ', ' + unread + ' sin leer' : ''}`">
             <Icon name="bell" :size="20" />
             <span v-if="unread > 0"
-              class="absolute top-1.5 right-1.5 min-w-[16px] h-4 px-1 bg-rose-500 text-white text-[10px] font-bold rounded-full grid place-items-center">
+              class="absolute top-1.5 right-1.5 min-w-[16px] h-4 px-1 bg-danger-500 text-white text-[10px] font-bold rounded-full grid place-items-center">
               {{ unread > 9 ? '9+' : unread }}
             </span>
           </button>
@@ -80,7 +80,7 @@ onBeforeUnmount(() => document.removeEventListener('click', close))
                 <router-link to="/chat" class="menu-item" role="menuitem"><Icon name="message" :size="17" /> Mensajes</router-link>
                 <router-link to="/notifications" class="menu-item" role="menuitem"><Icon name="bell" :size="17" /> Notificaciones</router-link>
                 <div class="h-px bg-slate-100 my-1"></div>
-                <button @click="logout" class="menu-item w-full text-rose-600 hover:bg-rose-50" role="menuitem"><Icon name="logout" :size="17" /> Cerrar sesión</button>
+                <button @click="logout" class="menu-item w-full text-danger-600 hover:bg-danger-50" role="menuitem"><Icon name="logout" :size="17" /> Cerrar sesión</button>
               </div>
             </Transition>
           </div>
@@ -99,7 +99,7 @@ onBeforeUnmount(() => document.removeEventListener('click', close))
 <style scoped>
 .nav-link { display: inline-flex; align-items: center; gap: .4rem; padding: .45rem .75rem; border-radius: .7rem; font-size: .875rem; font-weight: 500; color: #475569; transition: background .15s, color .15s; }
 .nav-link:hover { background: #f1f5f9; color: #0f172a; }
-.nav-active { background: #f0fdfa; color: #0f766e; font-weight: 600; }
+.nav-active { background: #f3f7ee; color: #386641; font-weight: 600; }
 .menu-item { display: flex; align-items: center; gap: .6rem; padding: .55rem .65rem; border-radius: .6rem; font-size: .875rem; color: #334155; transition: background .12s; }
 .menu-item:hover { background: #f1f5f9; }
 </style>

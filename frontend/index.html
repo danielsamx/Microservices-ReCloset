@@ -3,8 +3,18 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0" />
-    <meta name="theme-color" content="#386641" />
+    <meta name="theme-color" content="#10b981" />
     <meta name="description" content="ReCloset — marketplace de moda de segunda mano. Publica, descubre y conversa en tiempo real." />
+    <script>
+      // Aplica el tema antes de pintar para evitar parpadeo (FOUC)
+      (function () {
+        try {
+          var s = localStorage.getItem('recloset-theme');
+          var dark = s === 'dark' || (!s && window.matchMedia('(prefers-color-scheme: dark)').matches);
+          if (dark) { document.documentElement.classList.add('dark'); document.documentElement.style.colorScheme = 'dark'; }
+        } catch (e) {}
+      })();
+    </script>
     <title>ReCloset · Moda de segunda mano</title>
 
     <link rel="preconnect" href="https://fonts.googleapis.com" />

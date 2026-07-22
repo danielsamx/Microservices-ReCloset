@@ -16,13 +16,13 @@ const list = computed(() => {
 </script>
 <template>
   <div v-if="message || list.length"
-    class="bg-danger-50 border border-danger-100 text-danger-700 rounded-xl p-3 mb-4 animate-pop" role="alert" aria-live="assertive">
+    class="bg-danger-500/10 border border-danger-500/25 text-danger-700 dark:text-danger-300 rounded-xl p-3 mb-4 animate-pop" role="alert" aria-live="assertive">
     <div class="flex items-start gap-2">
       <Icon name="warning" :size="18" class="shrink-0 mt-0.5" />
       <div class="min-w-0 flex-1">
         <p class="text-sm font-semibold">{{ message || 'Revisa los datos del formulario.' }}</p>
         <ul v-if="list.length" class="mt-1 space-y-0.5">
-          <li v-for="(e, i) in list" :key="i" class="text-sm text-danger-600 flex gap-1.5">
+          <li v-for="(e, i) in list" :key="i" class="text-sm text-danger-600 dark:text-danger-400 flex gap-1.5">
             <span class="shrink-0">•</span><span>{{ e }}</span>
           </li>
         </ul>

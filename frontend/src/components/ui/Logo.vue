@@ -23,7 +23,7 @@ defineProps({
       class="text-brand group-hover:rotate-12 transition-transform duration-500 ease-out"
     >
       <!-- Background Circle Gradient Accent -->
-      <circle cx="50" cy="50" r="46" class="fill-brand-50 opacity-40 group-hover:opacity-60 transition-opacity" />
+      <circle cx="50" cy="50" r="46" class="fill-brand-200 dark:fill-brand-500 opacity-30 group-hover:opacity-50 transition-opacity" />
 
       <!-- Left Arrow Path (Recycling) -->
       <path 
@@ -69,7 +69,7 @@ defineProps({
         stroke="currentColor" 
         stroke-width="6.5" 
         stroke-linecap="round"
-        class="text-brand-800"
+        class="text-brand-800 dark:text-brand-200"
       />
       <!-- Hanger triangle base -->
       <path 
@@ -80,16 +80,16 @@ defineProps({
         stroke-width="6.5" 
         stroke-linecap="round" 
         stroke-linejoin="round"
-        class="text-brand-800"
+        class="text-brand-800 dark:text-brand-200"
       />
     </svg>
 
     <!-- Optional App Title next to logo -->
     <span 
       v-if="showText" 
-      class="font-display font-extrabold tracking-tight text-slate-800 text-lg sm:text-xl"
+      class="font-display font-extrabold tracking-tight text-body text-lg sm:text-xl"
     >
-      Re<span class="text-brand">Closet</span>
+      Re<span class="text-gradient">Closet</span>
     </span>
   </div>
 </template>

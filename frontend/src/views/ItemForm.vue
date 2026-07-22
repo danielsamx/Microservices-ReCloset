@@ -75,13 +75,13 @@ async function submit() {
 
 <template>
   <div class="max-w-2xl mx-auto">
-    <button @click="router.back()" class="text-sm text-slate-500 hover:text-slate-700 mb-3 inline-flex items-center gap-1">
+    <button @click="router.back()" class="text-sm text-muted hover:text-brand-600 mb-3 inline-flex items-center gap-1 transition-colors">
       <Icon name="back" :size="16" /> Volver
     </button>
 
-    <div class="card card-pad animate-fade-up">
-      <h1 class="font-display font-bold text-lg sm:text-xl mb-0.5">{{ editing ? 'Editar publicación' : 'Publicar prenda' }}</h1>
-      <p class="text-sm text-slate-400 mb-5">{{ editing ? 'Actualiza los datos de tu publicación' : 'Comparte una prenda con la comunidad' }}</p>
+    <div class="card-glass card-pad animate-fade-up shadow-glow">
+      <h1 class="font-display font-bold text-xl sm:text-2xl mb-0.5">{{ editing ? 'Editar publicación' : 'Publicar prenda' }}</h1>
+      <p class="text-sm text-faint mb-5">{{ editing ? 'Actualiza los datos de tu publicación' : 'Comparte una prenda con la comunidad' }}</p>
 
       <FormErrors :message="gErr" :errors="errors" />
 
@@ -113,32 +113,32 @@ async function submit() {
           <div class="sm:col-span-2">
             <label class="field-label">Precio (USD) <span class="field-req">*</span></label>
             <div class="relative max-w-[200px]">
-              <span class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 font-medium">$</span>
+              <span class="absolute left-3 top-1/2 -translate-y-1/2 text-faint font-medium">$</span>
               <input v-model="form.price" type="number" step="0.01" min="0" required placeholder="0.00" class="input pl-7" :class="{ 'input-error': errors.price }" />
             </div>
             <p v-if="errors.price" class="field-err"><Icon name="warning" :size="13" /> {{ errors.price[0] }}</p>
           </div>
         </div>
 
-        <div class="border-t border-slate-100 pt-4">
+        <div class="border-t pt-4" style="border-color: var(--border-soft);">
           <label class="field-label">Tallas disponibles <span class="field-req">*</span>
-            <span class="font-normal text-slate-400">— puedes elegir varias</span>
+            <span class="font-normal text-faint">— puedes elegir varias</span>
           </label>
           <SizeChips v-model="form.size_ids" :sizes="meta.sizes" :error="!!errors.size_ids" />
           <p v-if="errors.size_ids" class="field-err"><Icon name="warning" :size="13" /> {{ errors.size_ids[0] }}</p>
         </div>
 
-        <div v-if="!editing" class="border-t border-slate-100 pt-4">
-          <label class="field-label">Fotos / videos <span class="field-req">*</span> <span class="font-normal text-slate-400">(1 a 8)</span></label>
-          <label class="flex flex-col items-center border-2 border-dashed rounded-xl p-5 text-center cursor-pointer transition hover:border-brand hover:bg-brand-50/40"
-            :class="errors['files'] ? 'border-danger-300' : 'border-slate-200'">
+        <div v-if="!editing" class="border-t pt-4" style="border-color: var(--border-soft);">
+          <label class="field-label">Fotos / videos <span class="field-req">*</span> <span class="font-normal text-faint">(1 a 8)</span></label>
+          <label class="flex flex-col items-center border-2 border-dashed rounded-2xl p-6 text-center cursor-pointer transition hover:border-brand hover:bg-brand-500/8"
+            :class="errors['files'] ? 'border-danger-300' : ''" :style="errors['files'] ? '' : 'border-color: var(--border);'">
             <input type="file" multiple accept="image/*,video/mp4,video/webm" @change="onFiles" class="hidden" />
-            <Icon name="upload" :size="26" class="text-brand-600" />
-            <p class="text-sm text-slate-500 mt-1">Toca para seleccionar archivos</p>
+            <span class="w-12 h-12 rounded-2xl bg-gradient-to-br from-brand-400/20 to-lime-400/20 grid place-items-center text-brand-600 dark:text-brand-300 mb-1"><Icon name="upload" :size="24" /></span>
+            <p class="text-sm text-muted mt-1">Toca para seleccionar archivos</p>
           </label>
           <p v-if="errors['files']" class="field-err"><Icon name="warning" :size="13" /> {{ errors['files'][0] }}</p>
           <div v-if="previews.length" class="flex gap-2 flex-wrap mt-3">
-            <div v-for="(p, i) in previews" :key="i" class="relative w-16 h-16 rounded-xl overflow-hidden border bg-slate-100 group">
+            <div v-for="(p, i) in previews" :key="i" class="relative w-16 h-16 rounded-xl overflow-hidden border bg-brand-500/10 group" style="border-color: var(--border);">
               <video v-if="p.video" :src="p.url" class="w-full h-full object-cover" />
               <img v-else :src="p.url" class="w-full h-full object-cover" alt="" />
               <button type="button" @click="removePreview(i)"
@@ -147,15 +147,15 @@ async function submit() {
             </div>
           </div>
         </div>
-        <div v-else-if="existing.length" class="border-t border-slate-100 pt-4">
+        <div v-else-if="existing.length" class="border-t pt-4" style="border-color: var(--border-soft);">
           <label class="field-label">Archivos actuales</label>
           <div class="flex gap-2 flex-wrap">
-            <img v-for="m in existing" :key="m.media_id" :src="mediaUrl(m.url)" class="w-16 h-16 object-cover rounded-xl border" alt="" />
+            <img v-for="m in existing" :key="m.media_id" :src="mediaUrl(m.url)" class="w-16 h-16 object-cover rounded-xl border" style="border-color: var(--border);" alt="" />
           </div>
           <p class="field-help">Para cambiar los archivos, vuelve a publicar la prenda.</p>
         </div>
 
-        <div class="flex gap-2 pt-2 border-t border-slate-100">
+        <div class="flex gap-2 pt-2 border-t" style="border-color: var(--border-soft);">
           <button type="button" @click="router.back()" class="btn btn-ghost">Cancelar</button>
           <button :disabled="saving" class="btn btn-primary flex-1">
             <Spinner v-if="saving" :size="18" light /> {{ saving ? 'Guardando…' : (editing ? 'Guardar cambios' : 'Publicar prenda') }}

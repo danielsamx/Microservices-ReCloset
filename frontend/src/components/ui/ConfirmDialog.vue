@@ -11,7 +11,7 @@ const emit = defineEmits(['confirm', 'cancel'])
 </script>
 <template>
   <Modal :open="open" :title="title" @close="emit('cancel')">
-    <p class="text-sm text-slate-500 leading-relaxed">{{ message }}</p>
+    <p class="text-sm text-muted leading-relaxed">{{ message }}</p>
     <div class="flex justify-end gap-2 mt-5">
       <button class="btn btn-ghost" @click="emit('cancel')" :disabled="loading">{{ cancelText }}</button>
       <button class="btn" :class="danger ? 'btn-primary !bg-danger-600 hover:!bg-danger-700' : 'btn-primary'"

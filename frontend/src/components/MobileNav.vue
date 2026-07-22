@@ -13,8 +13,8 @@ const active = (p) => route.path === p || (p !== '/' && route.path.startsWith(p)
 </script>
 
 <template>
-  <nav class="md:hidden fixed bottom-0 inset-x-0 z-30 bg-white/95 backdrop-blur border-t border-slate-200"
-    style="padding-bottom: env(safe-area-inset-bottom)" aria-label="Navegación principal">
+  <nav class="md:hidden fixed bottom-0 inset-x-0 z-30 glass-strong border-t"
+    style="padding-bottom: env(safe-area-inset-bottom); border-color: var(--border)" aria-label="Navegación principal">
     <div class="grid" :class="auth.isAuthed ? 'grid-cols-5' : 'grid-cols-3'">
       <router-link to="/catalog" class="tab" :class="{ 'tab-on': active('/catalog') }">
         <Icon name="compass" :size="20" /><span class="lbl">Explorar</span>
@@ -26,7 +26,7 @@ const active = (p) => route.path === p || (p !== '/' && route.path.startsWith(p)
         </router-link>
 
         <router-link to="/items/new" class="tab" aria-label="Publicar prenda">
-          <span class="w-12 h-12 -mt-5 rounded-2xl bg-brand text-white grid place-items-center shadow-card-hover">
+          <span class="w-12 h-12 -mt-5 rounded-2xl bg-gradient-to-br from-brand-400 to-brand-700 text-white grid place-items-center shadow-glow transition-transform active:scale-90">
             <Icon name="plus" :size="24" />
           </span>
         </router-link>
@@ -62,7 +62,9 @@ const active = (p) => route.path === p || (p !== '/' && route.path.startsWith(p)
 
 <style scoped>
 .tab { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px;
-  min-height: 52px; padding: .45rem .15rem .5rem; color: #94a3b8; font-size: .64rem; font-weight: 500; }
-.tab-on { color: #386641; }
+  min-height: 52px; padding: .45rem .15rem .5rem; color: var(--text-faint); font-size: .64rem; font-weight: 500;
+  transition: color .18s ease; }
+.tab-on { color: var(--brand-strong); }
+:global(.dark) .tab-on { color: var(--mint); }
 .lbl { line-height: 1; max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 </style>

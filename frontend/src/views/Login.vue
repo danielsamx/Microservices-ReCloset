@@ -24,11 +24,11 @@ async function submit() {
   <div class="max-w-md mx-auto mt-4 sm:mt-10">
     <div class="text-center mb-6">
       <Logo :size="52" class="mx-auto mb-2" />
-      <h1 class="font-display font-extrabold text-2xl mt-3">Bienvenido de vuelta</h1>
-      <p class="text-sm text-slate-400">Inicia sesión para continuar</p>
+      <h1 class="font-display font-extrabold text-2xl sm:text-3xl mt-3">Bienvenido de vuelta</h1>
+      <p class="text-sm text-faint mt-1">Inicia sesión para continuar</p>
     </div>
-    <div class="card card-pad animate-fade-up">
-      <div v-if="error" class="flex items-center gap-2 bg-danger-50 text-danger-600 text-sm p-3 rounded-xl mb-4 animate-pop">
+    <div class="card-glass card-pad animate-fade-up shadow-glow">
+      <div v-if="error" class="flex items-center gap-2 bg-danger-500/10 text-danger-600 dark:text-danger-400 text-sm p-3 rounded-xl mb-4 animate-pop">
         <Icon name="warning" :size="17" class="shrink-0" />{{ error }}
       </div>
       <form @submit.prevent="submit" class="space-y-4" novalidate>
@@ -40,7 +40,7 @@ async function submit() {
           <label class="field-label" for="pw">Contraseña</label>
           <div class="relative">
             <input id="pw" v-model="form.password" :type="show ? 'text' : 'password'" required placeholder="••••••••" class="input pr-11" autocomplete="current-password" />
-            <button type="button" @click="show = !show" class="absolute right-2 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 w-8 h-8 grid place-items-center" :aria-label="show ? 'Ocultar contraseña' : 'Ver contraseña'">
+            <button type="button" @click="show = !show" class="absolute right-2 top-1/2 -translate-y-1/2 text-faint hover:text-brand-600 w-8 h-8 grid place-items-center transition-colors" :aria-label="show ? 'Ocultar contraseña' : 'Ver contraseña'">
               <Icon :name="show ? 'eye-off' : 'eye'" :size="18" />
             </button>
           </div>
@@ -49,8 +49,8 @@ async function submit() {
           <Spinner v-if="loading" :size="18" light /> {{ loading ? 'Entrando…' : 'Iniciar sesión' }}
         </button>
       </form>
-      <p class="text-sm text-slate-500 mt-5 text-center">¿No tienes cuenta?
-        <router-link to="/register" class="text-brand-700 font-semibold hover:underline">Regístrate gratis</router-link>
+      <p class="text-sm text-muted mt-5 text-center">¿No tienes cuenta?
+        <router-link to="/register" class="text-brand-700 dark:text-brand-300 font-semibold hover:underline">Regístrate gratis</router-link>
       </p>
     </div>
   </div>

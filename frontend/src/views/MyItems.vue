@@ -14,10 +14,10 @@ const toasts = useToasts()
 const items = ref([]); const summary = ref({}); const loading = ref(true); const error = ref(false)
 const confirm = ref({ open: false, item: null, loading: false })
 const stats = [
-  { k: 'total', l: 'Total', c: 'text-slate-800', icon: 'bag' },
-  { k: 'available', l: 'Disponibles', c: 'text-brand-600', icon: 'check' },
-  { k: 'reserved', l: 'Reservadas', c: 'text-amber-600', icon: 'tag' },
-  { k: 'sold', l: 'Vendidas', c: 'text-slate-500', icon: 'sold' },
+  { k: 'total', l: 'Total', c: 'text-body', chip: 'from-slate-400 to-slate-600', icon: 'bag' },
+  { k: 'available', l: 'Disponibles', c: 'text-brand-600 dark:text-brand-400', chip: 'from-brand-400 to-brand-600', icon: 'check' },
+  { k: 'reserved', l: 'Reservadas', c: 'text-amber-600 dark:text-amber-400', chip: 'from-amber-400 to-amber-600', icon: 'tag' },
+  { k: 'sold', l: 'Vendidas', c: 'text-muted', chip: 'from-slate-400 to-slate-500', icon: 'sold' },
 ]
 async function load() {
   loading.value = true; error.value = false
@@ -45,23 +45,23 @@ async function doRemove() {
 <template>
   <div class="flex items-center justify-between gap-3 mb-4">
     <div class="min-w-0">
-      <h1 class="font-display font-bold text-xl sm:text-2xl leading-tight truncate">Mis publicaciones</h1>
-      <p class="text-sm text-slate-400">Gestiona tus prendas publicadas</p>
+      <h1 class="font-display font-bold text-2xl sm:text-3xl leading-tight truncate">Mis publicaciones</h1>
+      <p class="text-sm text-faint mt-0.5">Gestiona tus prendas publicadas</p>
     </div>
     <router-link to="/items/new" class="btn btn-primary btn-sm shrink-0">
       <Icon name="plus" :size="16" /><span class="hidden sm:inline">Publicar</span>
     </router-link>
   </div>
 
-  <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5 mb-4">
-    <div v-for="s in stats" :key="s.k" class="card px-3 py-2.5">
+  <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5 mb-5">
+    <div v-for="(s, idx) in stats" :key="s.k" class="card px-3.5 py-3 hover:shadow-card-hover hover:-translate-y-0.5 transition-all animate-fade-up" :style="{ animationDelay: idx * 50 + 'ms' }">
       <div class="flex items-center justify-between gap-2">
-        <p class="text-xl font-display font-extrabold" :class="s.c">
+        <p class="text-2xl font-display font-extrabold" :class="s.c">
           <template v-if="loading">—</template><template v-else>{{ summary[s.k] || 0 }}</template>
         </p>
-        <span class="text-slate-300 shrink-0"><Icon :name="s.icon" :size="18" /></span>
+        <span class="w-9 h-9 rounded-xl grid place-items-center text-white shrink-0 bg-gradient-to-br shadow-soft" :class="s.chip"><Icon :name="s.icon" :size="17" /></span>
       </div>
-      <p class="text-[11px] text-slate-400 mt-0.5 truncate">{{ s.l }}</p>
+      <p class="text-[11px] text-faint mt-1 truncate">{{ s.l }}</p>
     </div>
   </div>
 
@@ -87,21 +87,21 @@ async function doRemove() {
         <router-link :to="`/items/${it.id}`" class="shrink-0">
           <img v-if="it.media?.length" :src="mediaUrl(it.media[0].url)"
             class="w-16 h-16 sm:w-14 sm:h-14 object-cover rounded-xl" :class="{ 'grayscale opacity-80': it.status==='sold' }" alt="" />
-          <div v-else class="w-16 h-16 sm:w-14 sm:h-14 grid place-items-center bg-slate-100 rounded-xl text-slate-300"><Icon name="shirt" :size="24" /></div>
+          <div v-else class="w-16 h-16 sm:w-14 sm:h-14 grid place-items-center bg-brand-500/10 rounded-xl text-brand-500/40"><Icon name="shirt" :size="24" /></div>
         </router-link>
 
         <div class="flex-1 min-w-0">
           <div class="flex items-start gap-2">
-            <router-link :to="`/items/${it.id}`" class="font-medium text-slate-800 line-clamp-2 hover:text-brand-700 text-sm flex-1 min-w-0">{{ it.name }}</router-link>
+            <router-link :to="`/items/${it.id}`" class="font-semibold text-body line-clamp-2 hover:text-brand-700 dark:hover:text-brand-300 text-sm flex-1 min-w-0 transition-colors">{{ it.name }}</router-link>
             <div class="shrink-0"><StatusBadge :status="it.status" /></div>
           </div>
-          <p class="text-brand-700 font-bold text-sm mt-0.5">{{ money(it.price) }}</p>
+          <p class="text-brand-700 dark:text-brand-300 font-bold text-sm mt-0.5">{{ money(it.price) }}</p>
           <div class="mt-1"><SizeList :item="it" :max="5" small /></div>
         </div>
       </div>
 
       <!-- acciones: fila propia en móvil, alineadas a la derecha en escritorio -->
-      <div class="flex items-center gap-2 mt-2.5 pt-2.5 border-t border-slate-100 sm:justify-end">
+      <div class="flex items-center gap-2 mt-2.5 pt-2.5 border-t sm:justify-end" style="border-color: var(--border-soft);">
         <select :value="it.status" @change="setStatus(it, $event.target.value)"
           class="input !py-1.5 text-sm flex-1 sm:flex-none sm:!w-auto min-w-0" aria-label="Cambiar estado de la publicación">
           <option value="available">Disponible</option>
@@ -112,7 +112,7 @@ async function doRemove() {
           <Icon name="edit" :size="15" /><span class="hidden sm:inline">Editar</span>
         </router-link>
         <button @click="askRemove(it)"
-          class="w-10 h-10 sm:w-9 sm:h-9 grid place-items-center rounded-xl text-slate-400 hover:text-danger-600 hover:bg-danger-50 transition shrink-0"
+          class="w-10 h-10 sm:w-9 sm:h-9 grid place-items-center rounded-xl text-faint hover:text-danger-600 hover:bg-danger-500/10 transition shrink-0"
           :aria-label="`Eliminar ${it.name}`"><Icon name="trash" :size="17" /></button>
       </div>
     </article>

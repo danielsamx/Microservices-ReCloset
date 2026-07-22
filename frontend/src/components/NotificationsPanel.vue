@@ -63,23 +63,23 @@ async function doConfirm() {
     <div v-else class="space-y-2 overflow-y-auto -mx-1 px-1">
       <div v-for="n in notif.items" :key="n.id"
         class="group card p-3 flex gap-3 items-start transition hover:shadow-card-hover animate-fade-up"
-        :class="{ 'ring-1 ring-brand-200 bg-brand-50/50': !n.read_at }">
+        :class="{ 'ring-1 ring-brand-400/40 bg-brand-500/5': !n.read_at }">
         <button @click="open(n)" class="flex gap-3 items-start flex-1 min-w-0 text-left">
           <span class="w-9 h-9 rounded-xl grid place-items-center shrink-0"
-            :class="n.read_at ? 'bg-slate-100 text-slate-400' : 'bg-brand-100 text-brand-700'">
+            :class="n.read_at ? 'bg-brand-500/10 text-faint' : 'bg-gradient-to-br from-brand-300 to-brand-600 text-white'">
             <Icon name="message" :size="18" />
           </span>
           <div class="flex-1 min-w-0">
             <div class="flex items-center gap-2">
-              <p class="font-semibold text-sm truncate" :class="n.read_at ? 'text-slate-600' : 'text-slate-900'">{{ n.title }}</p>
-              <span v-if="!n.read_at" class="w-2 h-2 rounded-full bg-brand shrink-0" title="No leída"></span>
+              <p class="font-semibold text-sm truncate" :class="n.read_at ? 'text-muted' : 'text-body'">{{ n.title }}</p>
+              <span v-if="!n.read_at" class="w-2 h-2 rounded-full bg-brand shrink-0 animate-glow-pulse" title="No leída"></span>
             </div>
-            <p class="text-sm text-slate-500 mt-0.5 line-clamp-2">{{ n.body }}</p>
-            <p class="text-[11px] text-slate-400 mt-1">{{ timeAgo(n.created_at) }}</p>
+            <p class="text-sm text-muted mt-0.5 line-clamp-2">{{ n.body }}</p>
+            <p class="text-[11px] text-faint mt-1">{{ timeAgo(n.created_at) }}</p>
           </div>
         </button>
         <button @click.stop="askDeleteOne(n.id)"
-          class="w-8 h-8 grid place-items-center rounded-lg text-slate-300 hover:text-danger-600 hover:bg-danger-50 transition shrink-0
+          class="w-8 h-8 grid place-items-center rounded-lg text-faint hover:text-danger-600 hover:bg-danger-500/10 transition shrink-0
                  opacity-100 md:opacity-0 md:group-hover:opacity-100 md:focus:opacity-100"
           aria-label="Eliminar notificación">
           <Icon name="trash" :size="16" />

@@ -27,9 +27,9 @@ function clear() { emit('update:modelValue', []) }
       </button>
     </div>
     <div class="flex items-center gap-3 mt-2">
-      <button type="button" @click="selectAll" class="text-xs text-brand-700 hover:underline">Seleccionar todas</button>
-      <button v-if="modelValue.length" type="button" @click="clear" class="text-xs text-slate-400 hover:text-slate-600">Limpiar</button>
-      <span class="text-xs ml-auto" :class="error ? 'text-danger-500' : 'text-slate-400'">
+      <button type="button" @click="selectAll" class="text-xs text-brand-700 dark:text-brand-300 hover:underline">Seleccionar todas</button>
+      <button v-if="modelValue.length" type="button" @click="clear" class="text-xs text-faint hover:text-muted">Limpiar</button>
+      <span class="text-xs ml-auto" :class="error ? 'text-danger-500' : 'text-faint'">
         {{ modelValue.length ? `${modelValue.length} seleccionada${modelValue.length > 1 ? 's' : ''}` : 'Ninguna seleccionada' }}
       </span>
     </div>
@@ -41,7 +41,8 @@ function clear() { emit('update:modelValue', []) }
   padding: .45rem .8rem; border-radius: .7rem; font-size: .85rem; font-weight: 600;
   border: 1.5px solid; cursor: pointer; transition: all .15s ease; }
 .chip:active { transform: scale(.96); }
-.chip-off { background: #fff; border-color: #e2e8f0; color: #475569; }
-.chip-off:hover { border-color: #cfe0a8; background: #f3f7ee; color: #386641; }
-.chip-on { background: #386641; border-color: #386641; color: #fff; box-shadow: 0 4px 12px -4px rgba(56,102,65,.5); }
+.chip-off { background: rgb(var(--surface) / .7); border-color: var(--border); color: var(--text-muted); }
+.chip-off:hover { border-color: var(--brand); background: rgba(16,185,129,.08); color: var(--brand-strong); }
+:global(.dark) .chip-off:hover { color: var(--mint); }
+.chip-on { background: linear-gradient(135deg, var(--brand), var(--brand-strong)); border-color: transparent; color: #fff; box-shadow: 0 4px 14px -4px rgba(16,185,129,.6); }
 </style>

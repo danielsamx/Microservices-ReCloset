@@ -21,8 +21,10 @@ const rest = computed(() => Math.max(0, all.value.length - shown.value.length))
 </template>
 <style scoped>
 .size-pill { display: inline-flex; align-items: center; justify-content: center; min-width: 1.65rem;
-  padding: .12rem .4rem; border-radius: .4rem; font-size: .7rem; font-weight: 700;
-  background: #f1f5f9; color: #475569; border: 1px solid #e2e8f0; line-height: 1.35; }
+  padding: .12rem .45rem; border-radius: .45rem; font-size: .7rem; font-weight: 700;
+  background: rgb(var(--surface-2) / 1); color: var(--text-muted); border: 1px solid var(--border); line-height: 1.35; }
+:global(.dark) .size-pill { background: rgba(255,255,255,.05); }
 .size-sm { font-size: .65rem; min-width: 1.4rem; }
-.size-more { background: #f3f7ee; color: #386641; border-color: #e4eecd; }
+.size-more { background: rgba(16,185,129,.12); color: var(--brand-strong); border-color: rgba(16,185,129,.25); }
+:global(.dark) .size-more { color: var(--mint); }
 </style>

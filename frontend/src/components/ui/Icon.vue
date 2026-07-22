@@ -7,6 +7,7 @@ import {
   Pencil, Trash2, Check, CheckCircle2, AlertTriangle, Info, Eye, EyeOff,
   Send, RotateCw, ImagePlus, Shirt, ShoppingBag, Inbox, Heart, Tag,
   Recycle, Sparkles, MapPin, MessagesSquare, PackageCheck, CircleUser,
+  Sun, Moon, Leaf,
 } from 'lucide-vue-next'
 
 const map = {
@@ -18,6 +19,7 @@ const map = {
   info: Info, eye: Eye, 'eye-off': EyeOff, send: Send, retry: RotateCw,
   upload: ImagePlus, shirt: Shirt, bag: ShoppingBag, inbox: Inbox, heart: Heart,
   tag: Tag, recycle: Recycle, sparkles: Sparkles, pin: MapPin, sold: PackageCheck,
+  sun: Sun, moon: Moon, leaf: Leaf,
 }
 
 defineProps({

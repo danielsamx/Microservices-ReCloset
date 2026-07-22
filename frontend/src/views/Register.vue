@@ -34,10 +34,10 @@ async function submit() {
   <div class="max-w-md mx-auto mt-4 sm:mt-8">
     <div class="text-center mb-6">
       <Logo :size="52" class="mx-auto mb-2" />
-      <h1 class="font-display font-extrabold text-2xl mt-3">Crea tu cuenta</h1>
-      <p class="text-sm text-slate-400">Únete a la comunidad de moda circular</p>
+      <h1 class="font-display font-extrabold text-2xl sm:text-3xl mt-3">Crea tu cuenta</h1>
+      <p class="text-sm text-faint mt-1">Únete a la comunidad de moda circular</p>
     </div>
-    <div class="card card-pad animate-fade-up">
+    <div class="card-glass card-pad animate-fade-up shadow-glow">
       <FormErrors :message="generalError" :errors="errors" />
       <form @submit.prevent="submit" class="space-y-4" novalidate>
         <div>
@@ -54,9 +54,9 @@ async function submit() {
           <label class="field-label">Contraseña <span class="field-req">*</span></label>
           <input v-model="form.password" type="password" required placeholder="Crea una contraseña" class="input" :class="{ 'input-error': errors.password }" autocomplete="new-password" />
           <div v-if="form.password" class="flex flex-wrap gap-x-3 gap-y-1 mt-2 text-[11px]">
-            <span class="inline-flex items-center gap-1" :class="rules.len ? 'text-brand-600' : 'text-slate-400'"><Icon :name="rules.len ? 'check' : 'info'" :size="12" /> 8+ caracteres</span>
-            <span class="inline-flex items-center gap-1" :class="rules.case ? 'text-brand-600' : 'text-slate-400'"><Icon :name="rules.case ? 'check' : 'info'" :size="12" /> Mayús y minús</span>
-            <span class="inline-flex items-center gap-1" :class="rules.num ? 'text-brand-600' : 'text-slate-400'"><Icon :name="rules.num ? 'check' : 'info'" :size="12" /> Un número</span>
+            <span class="inline-flex items-center gap-1 transition-colors" :class="rules.len ? 'text-brand-600 dark:text-brand-400' : 'text-faint'"><Icon :name="rules.len ? 'check' : 'info'" :size="12" /> 8+ caracteres</span>
+            <span class="inline-flex items-center gap-1 transition-colors" :class="rules.case ? 'text-brand-600 dark:text-brand-400' : 'text-faint'"><Icon :name="rules.case ? 'check' : 'info'" :size="12" /> Mayús y minús</span>
+            <span class="inline-flex items-center gap-1 transition-colors" :class="rules.num ? 'text-brand-600 dark:text-brand-400' : 'text-faint'"><Icon :name="rules.num ? 'check' : 'info'" :size="12" /> Un número</span>
           </div>
           <p v-if="errors.password" class="field-err"><Icon name="warning" :size="13" /> {{ errors.password[0] }}</p>
         </div>
@@ -68,8 +68,8 @@ async function submit() {
           <Spinner v-if="loading" :size="18" light /> {{ loading ? 'Creando cuenta…' : 'Crear cuenta' }}
         </button>
       </form>
-      <p class="text-sm text-slate-500 mt-5 text-center">¿Ya tienes cuenta?
-        <router-link to="/login" class="text-brand-700 font-semibold hover:underline">Inicia sesión</router-link>
+      <p class="text-sm text-muted mt-5 text-center">¿Ya tienes cuenta?
+        <router-link to="/login" class="text-brand-700 dark:text-brand-300 font-semibold hover:underline">Inicia sesión</router-link>
       </p>
     </div>
   </div>

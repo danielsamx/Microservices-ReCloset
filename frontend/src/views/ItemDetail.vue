@@ -34,10 +34,10 @@ async function contact() {
 }
 </script>
 <template>
-  <nav class="flex items-center gap-1.5 text-sm text-slate-400 mb-3">
-    <router-link to="/catalog" class="hover:text-brand-700">Catálogo</router-link>
+  <nav class="flex items-center gap-1.5 text-sm text-faint mb-3">
+    <router-link to="/catalog" class="hover:text-brand-700 dark:hover:text-brand-300 transition-colors">Catálogo</router-link>
     <Icon name="chevronRight" :size="14" />
-    <span class="text-slate-600 truncate max-w-[50vw]">{{ item?.name || 'Publicación' }}</span>
+    <span class="text-muted truncate max-w-[50vw]">{{ item?.name || 'Publicación' }}</span>
   </nav>
 
   <div v-if="loading" class="grid md:grid-cols-2 gap-6">
@@ -55,10 +55,10 @@ async function contact() {
 
   <div v-else class="grid md:grid-cols-2 gap-5 lg:gap-8 animate-fade-in">
     <div>
-      <div class="card overflow-hidden aspect-square bg-slate-100 relative">
+      <div class="card overflow-hidden aspect-square bg-brand-500/5 relative">
         <img v-if="item.media?.length" :src="mediaUrl(item.media[active].url)"
           class="w-full h-full object-cover animate-fade-in" :class="{ 'grayscale opacity-80': item.status === 'sold' }" :key="active" :alt="item.name" />
-        <div v-else class="w-full h-full grid place-items-center text-slate-300"><Icon name="shirt" :size="72" :stroke="1.2" /></div>
+        <div v-else class="w-full h-full grid place-items-center text-brand-500/30"><Icon name="shirt" :size="72" :stroke="1.2" /></div>
         <div v-if="item.status === 'sold'" class="absolute inset-0 grid place-items-center pointer-events-none">
           <span class="bg-slate-900/80 text-white text-sm font-semibold px-4 py-2 rounded-full flex items-center gap-2"><Icon name="sold" :size="16" /> Vendido</span>
         </div>
@@ -66,7 +66,7 @@ async function contact() {
       <div v-if="item.media?.length > 1" class="flex gap-2 mt-2.5 overflow-x-auto pb-1">
         <button v-for="(m, i) in item.media" :key="m.media_id" @click="active = i"
           class="w-16 h-16 rounded-xl overflow-hidden shrink-0 border-2 transition"
-          :class="i === active ? 'border-brand' : 'border-transparent opacity-70 hover:opacity-100'" :aria-label="`Imagen ${i+1}`">
+          :class="i === active ? 'border-brand shadow-glow' : 'border-transparent opacity-70 hover:opacity-100'" :aria-label="`Imagen ${i+1}`">
           <img :src="mediaUrl(m.url)" class="w-full h-full object-cover" alt="" />
         </button>
       </div>
@@ -75,35 +75,35 @@ async function contact() {
     <div>
       <div class="flex items-center gap-2 mb-1.5"><StatusBadge :status="item.status" /></div>
       <h1 class="font-display font-extrabold text-2xl sm:text-3xl leading-tight">{{ item.name }}</h1>
-      <p class="font-display font-extrabold text-3xl mt-1.5" :class="item.status === 'sold' ? 'text-slate-400 line-through' : 'text-brand-700'">{{ money(item.price) }}</p>
+      <p class="font-display font-extrabold text-3xl sm:text-4xl mt-1.5" :class="item.status === 'sold' ? 'text-faint line-through' : 'text-gradient'">{{ money(item.price) }}</p>
 
       <div v-if="sizes.length" class="mt-4">
         <h3 class="field-label mb-1.5">Tallas disponibles</h3>
         <div class="flex flex-wrap gap-1.5">
           <span v-for="s in sizes" :key="s.id"
-            class="min-w-[2.5rem] text-center px-2.5 py-1.5 rounded-lg border border-slate-200 bg-white text-sm font-semibold text-slate-700">
+            class="min-w-[2.5rem] text-center px-2.5 py-1.5 rounded-lg border text-sm font-semibold text-soft" style="border-color: var(--border); background: rgb(var(--surface) / .6);">
             {{ s.label }}
           </span>
         </div>
       </div>
 
       <div class="flex flex-wrap gap-2 mt-4">
-        <span class="badge bg-slate-100 text-slate-600">{{ item.category?.name }}</span>
-        <span class="badge bg-slate-100 text-slate-600">
-          <span class="w-3 h-3 rounded-full border border-slate-300" :style="{ background: item.color?.hex }"></span>{{ item.color?.name }}
+        <span class="badge bg-brand-500/10 text-muted">{{ item.category?.name }}</span>
+        <span class="badge bg-brand-500/10 text-muted">
+          <span class="w-3 h-3 rounded-full border" style="border-color: var(--border);" :style="{ background: item.color?.hex }"></span>{{ item.color?.name }}
         </span>
       </div>
 
       <div v-if="item.description" class="mt-4">
         <h3 class="field-label mb-1">Descripción</h3>
-        <p class="text-slate-600 whitespace-pre-line leading-relaxed text-[15px]">{{ item.description }}</p>
+        <p class="text-muted whitespace-pre-line leading-relaxed text-[15px]">{{ item.description }}</p>
       </div>
 
       <div class="card p-3 mt-4 flex items-center gap-3">
-        <span class="w-10 h-10 rounded-xl bg-brand-100 text-brand-800 grid place-items-center font-bold uppercase">{{ item.owner_name?.[0] || 'U' }}</span>
+        <span class="w-10 h-10 rounded-xl bg-gradient-to-br from-brand-300 to-brand-600 text-white grid place-items-center font-bold uppercase shadow-soft">{{ item.owner_name?.[0] || 'U' }}</span>
         <div class="min-w-0">
-          <p class="text-xs text-slate-400">Publicado por</p>
-          <p class="font-semibold text-slate-800 truncate">{{ item.owner_name || 'Usuario' }}</p>
+          <p class="text-xs text-faint">Publicado por</p>
+          <p class="font-semibold text-body truncate">{{ item.owner_name || 'Usuario' }}</p>
         </div>
       </div>
 

@@ -18,7 +18,7 @@ watch(() => auth.token, boot)
 
 <template>
   <Navbar />
-  <main class="max-w-7xl mx-auto px-4 sm:px-5 py-4 sm:py-6 pb-24 md:pb-10 min-h-[70vh]">
+  <main class="max-w-7xl mx-auto px-4 sm:px-5 py-5 sm:py-7 pb-24 md:pb-12 min-h-[70vh]">
     <!-- El <div> envolvente da a <transition> un único nodo raíz.
          Sin él, las vistas que devuelven fragmentos (varias secciones)
          no pueden animarse y con mode="out-in" no llegan a montarse. -->

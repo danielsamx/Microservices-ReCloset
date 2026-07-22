@@ -83,15 +83,15 @@ onBeforeUnmount(() => { if (channel.value) getEcho().leave(`conversation.${chann
 
 <template>
   <div class="flex items-center justify-between mb-3">
-    <h1 class="font-display font-bold text-xl sm:text-2xl">Mensajes</h1>
+    <h1 class="font-display font-bold text-2xl sm:text-3xl">Mensajes</h1>
     <router-link to="/catalog" class="btn btn-ghost btn-sm hidden sm:inline-flex"><Icon name="compass" :size="15" /> Explorar</router-link>
   </div>
 
   <div class="grid md:grid-cols-[330px_1fr] gap-3 h-[calc(100dvh-14.5rem)] md:h-[calc(100dvh-11.5rem)] min-h-[380px]">
     <aside class="card overflow-hidden flex flex-col" :class="{ 'hidden md:flex': active }">
-      <div class="px-3 py-2.5 border-b border-slate-100 shrink-0 flex items-center gap-2">
-        <p class="font-semibold text-slate-700 text-sm">Conversaciones</p>
-        <span v-if="conversations.length" class="badge bg-slate-100 text-slate-500 ml-auto">{{ conversations.length }}</span>
+      <div class="px-3 py-2.5 border-b shrink-0 flex items-center gap-2" style="border-color: var(--border-soft);">
+        <p class="font-semibold text-soft text-sm">Conversaciones</p>
+        <span v-if="conversations.length" class="badge bg-brand-500/10 text-muted ml-auto">{{ conversations.length }}</span>
       </div>
       <div class="overflow-y-auto flex-1">
         <div v-if="loadingList" class="p-3 space-y-3">
@@ -103,19 +103,20 @@ onBeforeUnmount(() => { if (channel.value) getEcho().leave(`conversation.${chann
         <EmptyState v-else-if="!conversations.length" icon="message" title="Sin conversaciones"
           subtitle="Contacta a un vendedor desde una publicación para empezar a chatear." />
         <button v-for="c in conversations" :key="c.id" @click="router.push(`/chat/${c.id}`)"
-          class="w-full text-left px-3 py-2.5 border-b border-slate-50 hover:bg-slate-50 flex gap-3 items-center transition"
-          :class="{ 'bg-brand-50/70': active?.id === c.id }">
+          class="w-full text-left px-3 py-2.5 border-b hover:bg-brand-500/5 flex gap-3 items-center transition"
+          style="border-color: var(--border-soft);"
+          :class="{ '!bg-brand-500/10': active?.id === c.id }">
           <img v-if="c.item.thumb" :src="mediaUrl(c.item.thumb)" class="w-11 h-11 rounded-xl object-cover shrink-0" alt="" />
-          <div v-else class="w-11 h-11 rounded-xl bg-slate-100 grid place-items-center shrink-0 text-slate-300"><Icon name="shirt" :size="20" /></div>
+          <div v-else class="w-11 h-11 rounded-xl bg-brand-500/10 grid place-items-center shrink-0 text-brand-500/40"><Icon name="shirt" :size="20" /></div>
           <div class="flex-1 min-w-0">
             <div class="flex items-center gap-2">
-              <p class="text-sm font-semibold text-slate-800 truncate">{{ c.other.name || 'Usuario' }}</p>
-              <span class="ml-auto text-[11px] text-slate-400 shrink-0">{{ timeAgo(c.last_message_at) }}</span>
+              <p class="text-sm font-semibold text-body truncate">{{ c.other.name || 'Usuario' }}</p>
+              <span class="ml-auto text-[11px] text-faint shrink-0">{{ timeAgo(c.last_message_at) }}</span>
             </div>
-            <p class="text-[11px] text-slate-400 truncate">{{ c.item.title }}</p>
+            <p class="text-[11px] text-faint truncate">{{ c.item.title }}</p>
             <div class="flex items-center gap-2">
-              <p class="text-xs truncate" :class="c.unread ? 'text-slate-800 font-medium' : 'text-slate-500'">{{ c.last_message || 'Sin mensajes' }}</p>
-              <span v-if="c.unread" class="ml-auto bg-brand text-white text-[10px] font-bold rounded-full min-w-[18px] h-[18px] px-1 grid place-items-center shrink-0">{{ c.unread }}</span>
+              <p class="text-xs truncate" :class="c.unread ? 'text-body font-medium' : 'text-muted'">{{ c.last_message || 'Sin mensajes' }}</p>
+              <span v-if="c.unread" class="ml-auto bg-gradient-to-br from-brand-400 to-brand-600 text-white text-[10px] font-bold rounded-full min-w-[18px] h-[18px] px-1 grid place-items-center shrink-0 shadow-soft">{{ c.unread }}</span>
             </div>
           </div>
         </button>
@@ -127,42 +128,42 @@ onBeforeUnmount(() => { if (channel.value) getEcho().leave(`conversation.${chann
         <EmptyState icon="messages" title="Selecciona una conversación" subtitle="Elige un chat de la lista para ver los mensajes." />
       </div>
       <template v-else>
-        <header class="px-3 py-2.5 border-b border-slate-100 flex items-center gap-2.5 shrink-0">
-          <button @click="router.push('/chat')" class="md:hidden w-9 h-9 grid place-items-center rounded-lg hover:bg-slate-100 shrink-0" aria-label="Volver a conversaciones"><Icon name="back" :size="18" /></button>
+        <header class="px-3 py-2.5 border-b flex items-center gap-2.5 shrink-0" style="border-color: var(--border-soft);">
+          <button @click="router.push('/chat')" class="md:hidden w-9 h-9 grid place-items-center rounded-lg hover:bg-brand-500/10 shrink-0" aria-label="Volver a conversaciones"><Icon name="back" :size="18" /></button>
           <template v-if="active">
-            <span class="w-9 h-9 rounded-lg bg-brand-100 text-brand-800 grid place-items-center font-bold uppercase shrink-0">{{ active.other.name?.[0] || 'U' }}</span>
+            <span class="w-9 h-9 rounded-lg bg-gradient-to-br from-brand-300 to-brand-600 text-white grid place-items-center font-bold uppercase shrink-0 shadow-soft">{{ active.other.name?.[0] || 'U' }}</span>
             <div class="min-w-0 flex-1">
-              <p class="font-semibold text-slate-800 truncate leading-tight text-sm">{{ active.other.name || 'Usuario' }}</p>
-              <router-link :to="`/items/${active.item.id}`" class="text-xs text-brand-700 hover:underline truncate block">{{ active.item.title }}</router-link>
+              <p class="font-semibold text-body truncate leading-tight text-sm">{{ active.other.name || 'Usuario' }}</p>
+              <router-link :to="`/items/${active.item.id}`" class="text-xs text-brand-700 dark:text-brand-300 hover:underline truncate block">{{ active.item.title }}</router-link>
             </div>
             <router-link :to="`/items/${active.item.id}`" class="btn btn-soft btn-sm hidden sm:inline-flex">Ver publicación</router-link>
-            <button @click="askRemove(active.id)" class="w-9 h-9 grid place-items-center rounded-xl text-slate-400 hover:text-danger-600 hover:bg-danger-50 transition shrink-0" aria-label="Eliminar conversación"><Icon name="trash" :size="17" /></button>
+            <button @click="askRemove(active.id)" class="w-9 h-9 grid place-items-center rounded-xl text-faint hover:text-danger-600 hover:bg-danger-500/10 transition shrink-0" aria-label="Eliminar conversación"><Icon name="trash" :size="17" /></button>
           </template>
         </header>
 
-        <div ref="scroller" class="flex-1 overflow-y-auto px-3 py-3 bg-slate-50/60">
+        <div ref="scroller" class="flex-1 overflow-y-auto px-3 py-3" style="background: rgb(var(--surface-2) / .5);">
           <div v-if="loadingThread" class="flex justify-center py-8"><Spinner :size="24" /></div>
           <template v-else>
             <div v-if="!messages.length" class="text-center py-10">
-              <div class="w-12 h-12 rounded-2xl bg-white border border-slate-100 grid place-items-center mx-auto text-brand-600 mb-2"><Icon name="send" :size="20" /></div>
-              <p class="text-sm text-slate-500">Envía el primer mensaje</p>
-              <p class="text-xs text-slate-400 mt-0.5">Pregunta por tallas, estado o disponibilidad.</p>
+              <div class="w-14 h-14 rounded-2xl card grid place-items-center mx-auto text-brand-600 dark:text-brand-300 mb-2 animate-floaty"><Icon name="send" :size="22" /></div>
+              <p class="text-sm text-muted">Envía el primer mensaje</p>
+              <p class="text-xs text-faint mt-0.5">Pregunta por tallas, estado o disponibilidad.</p>
             </div>
 
             <template v-for="(m, i) in messages" :key="m.id">
               <div v-if="showDay(i)" class="flex justify-center my-3">
-                <span class="text-[11px] font-medium text-slate-500 bg-white border border-slate-200 rounded-full px-2.5 py-0.5">{{ dayLabel(m.created_at) }}</span>
+                <span class="text-[11px] font-medium text-muted glass rounded-full px-2.5 py-0.5">{{ dayLabel(m.created_at) }}</span>
               </div>
               <div class="flex animate-fade-up" :class="[mine(m) ? 'justify-end' : 'justify-start', endsGroup(i) ? 'mb-2.5' : 'mb-0.5']">
                 <div class="max-w-[80%] sm:max-w-[70%]">
                   <div class="px-3.5 py-2 text-sm leading-relaxed break-words shadow-soft rounded-2xl"
                     :class="[
-                      mine(m) ? 'bg-brand text-white' : 'bg-white text-slate-700 border border-slate-100',
+                      mine(m) ? 'bg-gradient-to-br from-brand-500 to-brand-700 text-white' : 'card !rounded-2xl text-soft',
                       endsGroup(i) ? (mine(m) ? 'rounded-br-md' : 'rounded-bl-md') : ''
                     ]">
                     {{ m.body }}
                   </div>
-                  <p v-if="endsGroup(i)" class="text-[10.5px] text-slate-400 mt-0.5 px-1" :class="mine(m) ? 'text-right' : 'text-left'">
+                  <p v-if="endsGroup(i)" class="text-[10.5px] text-faint mt-0.5 px-1" :class="mine(m) ? 'text-right' : 'text-left'">
                     {{ clockTime(m.created_at) }}
                   </p>
                 </div>
@@ -171,7 +172,7 @@ onBeforeUnmount(() => { if (channel.value) getEcho().leave(`conversation.${chann
           </template>
         </div>
 
-        <form @submit.prevent="send" class="p-2.5 border-t border-slate-100 flex items-end gap-2 shrink-0 bg-white">
+        <form @submit.prevent="send" class="p-2.5 border-t flex items-end gap-2 shrink-0" style="border-color: var(--border-soft); background: rgb(var(--surface) / .6);">
           <input v-model="draft" placeholder="Escribe un mensaje…" class="input rounded-2xl flex-1 min-w-0" aria-label="Escribe un mensaje" autocomplete="off" />
           <button class="btn btn-primary rounded-2xl !px-3.5 shrink-0" :disabled="sending || !draft.trim()" aria-label="Enviar mensaje">
             <Spinner v-if="sending" :size="18" light /><Icon v-else name="send" :size="18" />

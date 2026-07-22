@@ -32,14 +32,14 @@ function setSize(id) { filters.value.size_id = filters.value.size_id === id ? ''
 <template>
   <div class="flex flex-col sm:flex-row sm:items-center gap-3 mb-3">
     <div class="min-w-0">
-      <h1 class="font-display font-bold text-xl sm:text-2xl leading-tight">Catálogo</h1>
-      <p class="text-sm text-slate-400">
+      <h1 class="font-display font-bold text-2xl sm:text-3xl leading-tight">Catálogo</h1>
+      <p class="text-sm text-faint mt-0.5">
         <template v-if="loading">Buscando prendas…</template>
         <template v-else>{{ total }} publicacion{{ total === 1 ? '' : 'es' }} disponible{{ total === 1 ? '' : 's' }}</template>
       </p>
     </div>
     <div class="relative sm:ml-auto sm:w-72">
-      <span class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"><Icon name="search" :size="17" /></span>
+      <span class="absolute left-3 top-1/2 -translate-y-1/2 text-faint"><Icon name="search" :size="17" /></span>
       <input v-model="filters.search" placeholder="Buscar prendas…" class="input pl-10" aria-label="Buscar prendas" />
     </div>
     <button class="btn btn-ghost btn-sm sm:hidden self-start" @click="showFilters = !showFilters">
@@ -59,8 +59,8 @@ function setSize(id) { filters.value.size_id = filters.value.size_id === id ? ''
         <option v-for="c in meta.colors" :key="c.id" :value="c.id">{{ c.name }}</option>
       </select>
 
-      <div class="w-px h-6 bg-slate-200 mx-1 hidden sm:block"></div>
-      <span class="text-xs text-slate-400 hidden sm:block">Talla:</span>
+      <div class="w-px h-6 mx-1 hidden sm:block" style="background: var(--border);"></div>
+      <span class="text-xs text-faint hidden sm:block">Talla:</span>
       <div class="flex flex-wrap gap-1.5">
         <button v-for="s in meta.sizes" :key="s.id" type="button" @click="setSize(s.id)"
           class="size-filter" :class="{ 'size-filter-on': filters.size_id === s.id }"
@@ -95,8 +95,11 @@ function setSize(id) { filters.value.size_id = filters.value.size_id === id ? ''
 </template>
 
 <style scoped>
-.size-filter { min-width: 2.2rem; padding: .3rem .55rem; border-radius: .55rem; font-size: .78rem; font-weight: 600;
-  border: 1.5px solid #e2e8f0; background: #fff; color: #475569; transition: all .15s; }
-.size-filter:hover { border-color: #cfe0a8; color: #386641; }
-.size-filter-on { background: #386641; border-color: #386641; color: #fff; }
+.size-filter { min-width: 2.2rem; padding: .3rem .6rem; border-radius: .6rem; font-size: .78rem; font-weight: 600;
+  border: 1.5px solid var(--border); background: rgb(var(--surface) / .6); color: var(--text-muted); transition: all .18s; }
+.size-filter:hover { border-color: var(--brand); color: var(--brand-strong); transform: translateY(-1px); }
+:global(.dark) .size-filter:hover { color: var(--mint); }
+.size-filter-on { background: linear-gradient(135deg, var(--brand), var(--brand-strong)); border-color: transparent; color: #fff;
+  box-shadow: 0 4px 12px -4px rgba(16,185,129,.6); }
+.size-filter-on:hover { color: #fff; }
 </style>

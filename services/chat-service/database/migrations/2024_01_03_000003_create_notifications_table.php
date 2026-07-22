@@ -9,9 +9,9 @@ return new class extends Migration {
             $t->id();
             $t->unsignedBigInteger('user_id')->index();
             $t->string('type')->default('message');
-            $t->string('title')->nullable();
-            $t->string('body')->nullable();
-            $t->jsonb('data')->nullable();
+            $t->text('title')->nullable();
+            $t->text('body')->nullable();
+            $t->text('data')->nullable();
             $t->timestamp('read_at')->nullable();
             $t->timestamps();
         });

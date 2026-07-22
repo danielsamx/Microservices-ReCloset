@@ -19,7 +19,7 @@ class TwoFactorCodeMail extends Mailable
 
     public function envelope(): Envelope
     {
-        return new Envelope(subject: 'Tu código de acceso: '.$this->code.' · ReCloset');
+        return new Envelope(subject: 'Tu código de acceso · ReCloset');
     }
 
     public function content(): Content

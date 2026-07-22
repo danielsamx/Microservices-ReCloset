@@ -28,7 +28,7 @@ services:
       media-service:  { condition: service_healthy }
     networks: [recloset]
     healthcheck:
-      test: ["CMD", "wget", "-qO-", "http://localhost/health"]
+      test: ["CMD", "wget", "-qO-", "http://127.0.0.1/health"]
       interval: 15s
       timeout: 5s
       retries: 5

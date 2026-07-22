@@ -1,9 +1,11 @@
 <?php
 namespace App\Support;
 
+use App\Casts\EncryptedCast;
 use App\Mail\TwoFactorCodeMail;
 use App\Models\TwoFactorChallenge;
 use App\Models\User;
+use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;

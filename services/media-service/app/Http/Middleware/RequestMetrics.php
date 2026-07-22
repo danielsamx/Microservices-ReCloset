@@ -5,8 +5,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 
 /**
- * Collects lightweight in-process metrics (request counts, error counts,
- * response-time buckets) exposed at /metrics in Prometheus text format.
+ * Métricas ligeras en proceso (conteos y latencia) expuestas en /metrics.
+ * Toda la parte de caché va protegida: si la caché falla, la petición sigue igual.
  */
 class RequestMetrics
 {
@@ -16,17 +16,22 @@ class RequestMetrics
         $response = $next($request);
         $ms = (microtime(true) - $start) * 1000;
 
-        $store = Cache::store('file');
-        $store->increment('m_requests_total', 1);
-        if ($response->getStatusCode() >= 500) {
-            $store->increment('m_errors_total', 1);
+        try {
+            $store = Cache::store('file');
+            $store->increment('m_requests_total', 1);
+            if (method_exists($response, 'getStatusCode') && $response->getStatusCode() >= 500) {
+                $store->increment('m_errors_total', 1);
+            }
+            $sum = (float) $store->get('m_latency_sum_ms', 0) + $ms;
+            $store->forever('m_latency_sum_ms', $sum);
+            $store->increment('m_latency_count', 1);
+        } catch (\Throwable $e) {
+            // Nunca dejar que las métricas afecten al request.
         }
-        // rolling sum + count for average latency
-        $sum = (float) $store->get('m_latency_sum_ms', 0) + $ms;
-        $store->forever('m_latency_sum_ms', $sum);
-        $store->increment('m_latency_count', 1);
 
-        $response->headers->set('X-Response-Time-ms', round($ms, 2));
+        if (method_exists($response, 'headers')) {
+            $response->headers->set('X-Response-Time-ms', round($ms, 2));
+        }
         return $response;
     }
 }

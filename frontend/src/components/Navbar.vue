@@ -50,13 +50,12 @@ onBeforeUnmount(() => document.removeEventListener('click', close))
         </template>
       </nav>
 
-      <div class="ml-auto flex items-center gap-1.5">
+      <div class="ml-auto flex items-center gap-1">
+        <router-link v-if="auth.isAuthed" to="/items/new" class="btn btn-primary btn-sm hidden sm:inline-flex mr-1">
+          <Icon name="plus" :size="17" /> Publicar
+        </router-link>
         <ThemeToggle />
         <template v-if="auth.isAuthed">
-          <router-link to="/items/new" class="btn btn-primary btn-sm hidden sm:inline-flex">
-            <Icon name="plus" :size="17" /> Publicar
-          </router-link>
-
           <button @click="notifOpen = true"
             class="relative w-10 h-10 grid place-items-center rounded-xl text-muted hover:bg-brand-500/10 hover:text-brand-700 dark:hover:text-brand-300 transition"
             :aria-label="`Notificaciones${unread ? ', ' + unread + ' sin leer' : ''}`">
@@ -67,12 +66,14 @@ onBeforeUnmount(() => document.removeEventListener('click', close))
             </span>
           </button>
 
+          <span class="hidden sm:block w-px h-6 mx-1.5 shrink-0" style="background: var(--border);"></span>
+
           <div class="relative hidden sm:block" @click.stop>
-            <button @click="toggleMenu" class="flex items-center gap-2 rounded-xl hover:bg-brand-500/10 py-1 pl-1 pr-2 transition"
+            <button @click="toggleMenu" class="flex items-center gap-2 rounded-xl p-1 sm:pr-2 ring-1 ring-transparent hover:bg-brand-500/10 hover:ring-[var(--border)] transition"
               :aria-expanded="menuOpen" aria-haspopup="menu" aria-label="Menú de usuario">
-              <span class="w-8 h-8 rounded-lg bg-gradient-to-br from-brand-300 to-brand-600 text-white grid place-items-center text-sm font-bold uppercase shadow-soft">{{ auth.user?.name?.[0] || 'U' }}</span>
-              <span class="text-sm font-medium text-soft max-w-[90px] truncate hidden lg:block">{{ auth.user?.name }}</span>
-              <Icon name="chevronRight" :size="15" class="text-faint rotate-90 transition" :class="{ '-rotate-90': menuOpen }" />
+              <span class="w-8 h-8 rounded-lg bg-gradient-to-br from-brand-300 to-brand-600 text-white grid place-items-center text-sm font-bold uppercase shadow-soft shrink-0">{{ auth.user?.name?.[0] || 'U' }}</span>
+              <span class="text-sm font-semibold text-body max-w-[130px] truncate hidden lg:block">{{ auth.user?.name }}</span>
+              <Icon name="chevronRight" :size="15" class="text-faint rotate-90 transition hidden sm:block" :class="{ '-rotate-90': menuOpen }" />
             </button>
             <Transition name="modal">
               <div v-if="menuOpen" role="menu" class="absolute right-0 mt-2 w-56 card-glass p-1.5 animate-pop origin-top-right z-40">

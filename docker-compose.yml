@@ -71,7 +71,7 @@ services:
       INTERNAL_SERVICE_TOKEN: ${INTERNAL_SERVICE_TOKEN}
       # ---- Correo (Resend) ----
       MAIL_MAILER: ${MAIL_MAILER:-log}
-      MAIL_FROM_ADDRESS: ${MAIL_FROM_ADDRESS:-no-reply@recloset.local}
+      MAIL_FROM_ADDRESS: ${MAIL_FROM_ADDRESS:-onboarding@resend.dev}
       MAIL_FROM_NAME: ${MAIL_FROM_NAME:-ReCloset}
       RESEND_API_KEY: ${RESEND_API_KEY:-}
       FRONTEND_URL: ${FRONTEND_URL:-http://localhost:5173}

@@ -14,10 +14,10 @@ const toasts = useToasts()
 const items = ref([]); const summary = ref({}); const loading = ref(true); const error = ref(false)
 const confirm = ref({ open: false, item: null, loading: false })
 const stats = [
-  { k: 'total', l: 'Total', c: 'text-body', chip: 'from-slate-400 to-slate-600', icon: 'bag' },
-  { k: 'available', l: 'Disponibles', c: 'text-brand-600 dark:text-brand-400', chip: 'from-brand-400 to-brand-600', icon: 'check' },
-  { k: 'reserved', l: 'Reservadas', c: 'text-amber-600 dark:text-amber-400', chip: 'from-amber-400 to-amber-600', icon: 'tag' },
-  { k: 'sold', l: 'Vendidas', c: 'text-muted', chip: 'from-slate-400 to-slate-500', icon: 'sold' },
+  { k: 'total',     l: 'Total',       grad: 'from-slate-500 to-slate-700',    wash: 'from-slate-400/15',   icon: 'bag' },
+  { k: 'available', l: 'Disponibles', grad: 'from-brand-400 to-brand-600',    wash: 'from-brand-400/20',   icon: 'check' },
+  { k: 'reserved',  l: 'Reservadas',  grad: 'from-amber-400 to-amber-600',    wash: 'from-amber-400/20',   icon: 'tag' },
+  { k: 'sold',      l: 'Vendidas',    grad: 'from-lime-400 to-brand-500',     wash: 'from-lime-400/20',    icon: 'sold' },
 ]
 async function load() {
   loading.value = true; error.value = false
@@ -53,21 +53,33 @@ async function doRemove() {
     </router-link>
   </div>
 
-  <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5 mb-5">
-    <div v-for="(s, idx) in stats" :key="s.k" class="card px-3.5 py-3 hover:shadow-card-hover hover:-translate-y-0.5 transition-all animate-fade-up" :style="{ animationDelay: idx * 50 + 'ms' }">
-      <div class="flex items-center justify-between gap-2">
-        <p class="text-2xl font-display font-extrabold" :class="s.c">
-          <template v-if="loading">—</template><template v-else>{{ summary[s.k] || 0 }}</template>
-        </p>
-        <span class="w-9 h-9 rounded-xl grid place-items-center text-white shrink-0 bg-gradient-to-br shadow-soft" :class="s.chip"><Icon :name="s.icon" :size="17" /></span>
-      </div>
-      <p class="text-[11px] text-faint mt-1 truncate">{{ s.l }}</p>
+  <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mb-6">
+    <div v-for="(s, idx) in stats" :key="s.k"
+      class="card relative overflow-hidden p-4 sm:p-5 hover:shadow-card-hover hover:-translate-y-1 transition-all animate-fade-up"
+      :style="{ animationDelay: idx * 60 + 'ms' }">
+      <!-- lavado de color en gradiente (esquina) -->
+      <div class="pointer-events-none absolute -right-6 -top-6 w-24 h-24 rounded-full bg-gradient-to-br to-transparent" :class="s.wash"></div>
+
+      <!-- icono grande con gradiente -->
+      <span class="relative w-12 h-12 sm:w-14 sm:h-14 rounded-2xl grid place-items-center text-white shrink-0 bg-gradient-to-br shadow-soft" :class="s.grad">
+        <Icon :name="s.icon" :size="26" />
+      </span>
+
+      <!-- número grande -->
+      <p class="relative font-display font-extrabold text-4xl sm:text-5xl leading-none mt-4 text-body tabular-nums">
+        <template v-if="loading"><span class="text-faint">—</span></template>
+        <template v-else>{{ summary[s.k] ?? 0 }}</template>
+      </p>
+      <p class="relative text-xs sm:text-sm font-medium text-faint mt-1.5">{{ s.l }}</p>
     </div>
   </div>
 
-  <div v-if="loading" class="space-y-2.5">
-    <div v-for="i in 3" :key="i" class="card p-2.5 flex items-center gap-3">
-      <Skeleton h="3.5rem" w="3.5rem" /><div class="flex-1 space-y-2"><Skeleton h="1rem" w="40%" /><Skeleton h=".9rem" w="20%" /></div>
+  <div v-if="loading" class="grid sm:grid-cols-2 xl:grid-cols-3 gap-3">
+    <div v-for="i in 6" :key="i" class="card p-3">
+      <div class="flex gap-3">
+        <Skeleton h="4.5rem" w="4.5rem" /><div class="flex-1 space-y-2 pt-1"><Skeleton h="1rem" w="70%" /><Skeleton h=".9rem" w="35%" /><Skeleton h=".8rem" w="55%" /></div>
+      </div>
+      <Skeleton h="2.2rem" w="100%" rounded=".7rem" />
     </div>
   </div>
 
@@ -80,40 +92,43 @@ async function doRemove() {
     <router-link to="/items/new" class="btn btn-primary">Publicar prenda</router-link>
   </EmptyState>
 
-  <div v-else class="space-y-2.5">
-    <article v-for="it in items" :key="it.id" class="card p-2.5 hover:shadow-card-hover transition">
-      <!-- fila superior: imagen + datos -->
+  <div v-else class="grid sm:grid-cols-2 xl:grid-cols-3 gap-3">
+    <article v-for="(it, idx) in items" :key="it.id"
+      class="card p-3 flex flex-col hover:shadow-card-hover hover:-translate-y-0.5 transition-all animate-fade-up"
+      :style="{ animationDelay: Math.min(idx, 9) * 40 + 'ms' }">
+      <!-- cabecera: imagen + datos -->
       <div class="flex items-start gap-3">
         <router-link :to="`/items/${it.id}`" class="shrink-0">
           <img v-if="it.media?.length" :src="mediaUrl(it.media[0].url)"
-            class="w-16 h-16 sm:w-14 sm:h-14 object-cover rounded-xl" :class="{ 'grayscale opacity-80': it.status==='sold' }" alt="" />
-          <div v-else class="w-16 h-16 sm:w-14 sm:h-14 grid place-items-center bg-brand-500/10 rounded-xl text-brand-500/40"><Icon name="shirt" :size="24" /></div>
+            class="w-[4.5rem] h-[4.5rem] object-cover rounded-xl" :class="{ 'grayscale opacity-80': it.status==='sold' }" alt="" />
+          <div v-else class="w-[4.5rem] h-[4.5rem] grid place-items-center bg-brand-500/10 rounded-xl text-brand-500/40"><Icon name="shirt" :size="26" /></div>
         </router-link>
 
         <div class="flex-1 min-w-0">
           <div class="flex items-start gap-2">
             <router-link :to="`/items/${it.id}`" class="font-semibold text-body line-clamp-2 hover:text-brand-700 dark:hover:text-brand-300 text-sm flex-1 min-w-0 transition-colors">{{ it.name }}</router-link>
-            <div class="shrink-0"><StatusBadge :status="it.status" /></div>
+            <StatusBadge :status="it.status" class="shrink-0" />
           </div>
-          <p class="text-brand-700 dark:text-brand-300 font-bold text-sm mt-0.5">{{ money(it.price) }}</p>
-          <div class="mt-1"><SizeList :item="it" :max="5" small /></div>
+          <p class="text-brand-700 dark:text-brand-300 font-bold mt-0.5">{{ money(it.price) }}</p>
+          <div class="mt-1.5"><SizeList :item="it" :max="6" small /></div>
         </div>
       </div>
 
-      <!-- acciones: fila propia en móvil, alineadas a la derecha en escritorio -->
-      <div class="flex items-center gap-2 mt-2.5 pt-2.5 border-t sm:justify-end" style="border-color: var(--border-soft);">
+      <!-- acciones: pegadas al fondo de la tarjeta -->
+      <div class="flex items-center gap-2 mt-3 pt-3 border-t mt-auto" style="border-color: var(--border-soft);">
         <select :value="it.status" @change="setStatus(it, $event.target.value)"
-          class="input !py-1.5 text-sm flex-1 sm:flex-none sm:!w-auto min-w-0" aria-label="Cambiar estado de la publicación">
+          class="input !py-1.5 text-sm flex-1 min-w-0" aria-label="Cambiar estado de la publicación">
           <option value="available">Disponible</option>
           <option value="reserved">Reservada</option>
           <option value="sold">Vendida</option>
         </select>
-        <router-link :to="`/items/${it.id}/edit`" class="btn btn-soft btn-sm shrink-0" :aria-label="`Editar ${it.name}`">
-          <Icon name="edit" :size="15" /><span class="hidden sm:inline">Editar</span>
+        <router-link :to="`/items/${it.id}/edit`"
+          class="w-9 h-9 grid place-items-center rounded-xl btn-soft shrink-0" :aria-label="`Editar ${it.name}`">
+          <Icon name="edit" :size="16" />
         </router-link>
         <button @click="askRemove(it)"
-          class="w-10 h-10 sm:w-9 sm:h-9 grid place-items-center rounded-xl text-faint hover:text-danger-600 hover:bg-danger-500/10 transition shrink-0"
-          :aria-label="`Eliminar ${it.name}`"><Icon name="trash" :size="17" /></button>
+          class="w-9 h-9 grid place-items-center rounded-xl text-faint hover:text-danger-600 hover:bg-danger-500/10 transition shrink-0"
+          :aria-label="`Eliminar ${it.name}`"><Icon name="trash" :size="16" /></button>
       </div>
     </article>
   </div>

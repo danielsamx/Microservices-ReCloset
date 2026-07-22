@@ -40,11 +40,11 @@ async function contact() {
     <span class="text-muted truncate max-w-[50vw]">{{ item?.name || 'Publicación' }}</span>
   </nav>
 
-  <div v-if="loading" class="grid md:grid-cols-2 gap-6">
-    <Skeleton h="clamp(280px,48vw,440px)" rounded="1.125rem" />
-    <div class="space-y-3">
-      <Skeleton h="2rem" w="70%" /><Skeleton h="1.8rem" w="40%" />
-      <Skeleton h="1rem" w="55%" /><Skeleton h="5rem" /><Skeleton h="3rem" w="60%" />
+  <div v-if="loading" class="grid lg:grid-cols-[1.05fr_1fr] gap-6 lg:gap-8 items-start">
+    <Skeleton h="clamp(300px,46vw,520px)" rounded="1.125rem" />
+    <div class="card p-5 space-y-3">
+      <Skeleton h="1.4rem" w="35%" /><Skeleton h="2rem" w="70%" /><Skeleton h="2rem" w="45%" />
+      <Skeleton h="1rem" w="55%" /><Skeleton h="4rem" /><Skeleton h="3rem" w="70%" />
     </div>
   </div>
 
@@ -53,66 +53,84 @@ async function contact() {
     <router-link to="/catalog" class="btn btn-primary">Volver al catálogo</router-link>
   </EmptyState>
 
-  <div v-else class="grid md:grid-cols-2 gap-5 lg:gap-8 animate-fade-in">
-    <div>
+  <div v-else class="grid lg:grid-cols-[1.05fr_1fr] gap-6 lg:gap-8 items-start animate-fade-in">
+    <!-- Galería (sticky en escritorio para acompañar el scroll de los detalles) -->
+    <div class="lg:sticky lg:top-20 self-start">
       <div class="card overflow-hidden aspect-square bg-brand-500/5 relative">
         <img v-if="item.media?.length" :src="mediaUrl(item.media[active].url)"
           class="w-full h-full object-cover animate-fade-in" :class="{ 'grayscale opacity-80': item.status === 'sold' }" :key="active" :alt="item.name" />
-        <div v-else class="w-full h-full grid place-items-center text-brand-500/30"><Icon name="shirt" :size="72" :stroke="1.2" /></div>
+        <div v-else class="w-full h-full grid place-items-center text-brand-500/30"><Icon name="shirt" :size="96" :stroke="1.2" /></div>
         <div v-if="item.status === 'sold'" class="absolute inset-0 grid place-items-center pointer-events-none">
           <span class="bg-slate-900/80 text-white text-sm font-semibold px-4 py-2 rounded-full flex items-center gap-2"><Icon name="sold" :size="16" /> Vendido</span>
         </div>
       </div>
-      <div v-if="item.media?.length > 1" class="flex gap-2 mt-2.5 overflow-x-auto pb-1">
+      <div v-if="item.media?.length > 1" class="flex gap-2 mt-3 overflow-x-auto pb-1">
         <button v-for="(m, i) in item.media" :key="m.media_id" @click="active = i"
-          class="w-16 h-16 rounded-xl overflow-hidden shrink-0 border-2 transition"
+          class="w-16 h-16 sm:w-[4.5rem] sm:h-[4.5rem] rounded-xl overflow-hidden shrink-0 border-2 transition"
           :class="i === active ? 'border-brand shadow-glow' : 'border-transparent opacity-70 hover:opacity-100'" :aria-label="`Imagen ${i+1}`">
           <img :src="mediaUrl(m.url)" class="w-full h-full object-cover" alt="" />
         </button>
       </div>
     </div>
 
-    <div>
-      <div class="flex items-center gap-2 mb-1.5"><StatusBadge :status="item.status" /></div>
-      <h1 class="font-display font-extrabold text-2xl sm:text-3xl leading-tight">{{ item.name }}</h1>
-      <p class="font-display font-extrabold text-3xl sm:text-4xl mt-1.5" :class="item.status === 'sold' ? 'text-faint line-through' : 'text-gradient'">{{ money(item.price) }}</p>
-
-      <div v-if="sizes.length" class="mt-4">
-        <h3 class="field-label mb-1.5">Tallas disponibles</h3>
-        <div class="flex flex-wrap gap-1.5">
-          <span v-for="s in sizes" :key="s.id"
-            class="min-w-[2.5rem] text-center px-2.5 py-1.5 rounded-lg border text-sm font-semibold text-soft" style="border-color: var(--border); background: rgb(var(--surface) / .6);">
-            {{ s.label }}
-          </span>
+    <!-- Detalles (columna que llena el alto de la imagen) -->
+    <div class="space-y-4">
+      <div class="card p-5 sm:p-6">
+        <div class="flex items-center justify-between gap-3 mb-2">
+          <StatusBadge :status="item.status" />
+          <span class="text-xs text-faint">{{ item.category?.name }}</span>
         </div>
-      </div>
+        <h1 class="font-display font-extrabold text-2xl sm:text-3xl leading-tight">{{ item.name }}</h1>
+        <p class="font-display font-extrabold text-3xl sm:text-4xl mt-2" :class="item.status === 'sold' ? 'text-faint line-through' : 'text-gradient'">{{ money(item.price) }}</p>
 
-      <div class="flex flex-wrap gap-2 mt-4">
-        <span class="badge bg-brand-500/10 text-muted">{{ item.category?.name }}</span>
-        <span class="badge bg-brand-500/10 text-muted">
-          <span class="w-3 h-3 rounded-full border" style="border-color: var(--border);" :style="{ background: item.color?.hex }"></span>{{ item.color?.name }}
-        </span>
-      </div>
+        <div class="my-4 border-t" style="border-color: var(--border-soft);"></div>
 
-      <div v-if="item.description" class="mt-4">
-        <h3 class="field-label mb-1">Descripción</h3>
-        <p class="text-muted whitespace-pre-line leading-relaxed text-[15px]">{{ item.description }}</p>
-      </div>
-
-      <div class="card p-3 mt-4 flex items-center gap-3">
-        <span class="w-10 h-10 rounded-xl bg-gradient-to-br from-brand-300 to-brand-600 text-white grid place-items-center font-bold uppercase shadow-soft">{{ item.owner_name?.[0] || 'U' }}</span>
-        <div class="min-w-0">
-          <p class="text-xs text-faint">Publicado por</p>
-          <p class="font-semibold text-body truncate">{{ item.owner_name || 'Usuario' }}</p>
+        <div v-if="sizes.length" class="mb-4">
+          <h3 class="field-label mb-1.5">Tallas disponibles</h3>
+          <div class="flex flex-wrap gap-1.5">
+            <span v-for="s in sizes" :key="s.id"
+              class="min-w-[2.5rem] text-center px-2.5 py-1.5 rounded-lg border text-sm font-semibold text-soft" style="border-color: var(--border); background: rgb(var(--surface) / .6);">
+              {{ s.label }}
+            </span>
+          </div>
         </div>
-      </div>
 
-      <div class="mt-5 flex flex-col sm:flex-row gap-2.5">
-        <button v-if="!isMine" @click="contact" :disabled="starting || item.status === 'sold'" class="btn btn-primary btn-lg w-full sm:w-auto">
+        <div class="flex flex-wrap gap-x-6 gap-y-3 mb-4">
+          <div>
+            <p class="field-label mb-1">Color</p>
+            <span class="inline-flex items-center gap-2 text-sm font-medium text-soft">
+              <span class="w-4 h-4 rounded-full border" style="border-color: var(--border);" :style="{ background: item.color?.hex }"></span>{{ item.color?.name }}
+            </span>
+          </div>
+          <div>
+            <p class="field-label mb-1">Categoría</p>
+            <span class="text-sm font-medium text-soft">{{ item.category?.name }}</span>
+          </div>
+        </div>
+
+        <!-- Vendedor -->
+        <div class="flex items-center gap-3 rounded-xl p-3 mb-4" style="background: rgb(var(--surface-2) / 1); border: 1px solid var(--border-soft);">
+          <span class="w-10 h-10 rounded-xl bg-gradient-to-br from-brand-300 to-brand-600 text-white grid place-items-center font-bold uppercase shadow-soft shrink-0">{{ item.owner_name?.[0] || 'U' }}</span>
+          <div class="min-w-0">
+            <p class="text-xs text-faint">Publicado por</p>
+            <p class="font-semibold text-body truncate">{{ item.owner_name || 'Usuario' }}</p>
+          </div>
+        </div>
+
+        <button v-if="!isMine" @click="contact" :disabled="starting || item.status === 'sold'" class="btn btn-primary btn-lg btn-block">
           <Spinner v-if="starting" :size="18" light /><Icon v-else name="message" :size="18" />
           {{ item.status === 'sold' ? 'No disponible' : 'Contactar al vendedor' }}
         </button>
-        <router-link v-else :to="`/items/${item.id}/edit`" class="btn btn-ghost btn-lg w-full sm:w-auto"><Icon name="edit" :size="18" /> Editar publicación</router-link>
+        <div v-else class="flex flex-col sm:flex-row gap-2.5">
+          <router-link :to="`/items/${item.id}/edit`" class="btn btn-primary btn-lg flex-1"><Icon name="edit" :size="18" /> Editar publicación</router-link>
+          <router-link to="/my-items" class="btn btn-ghost btn-lg sm:w-auto"><Icon name="bag" :size="18" /> Mis publicaciones</router-link>
+        </div>
+      </div>
+
+      <!-- Descripción: llena la columna en lugar de dejar hueco -->
+      <div v-if="item.description" class="card p-5 sm:p-6">
+        <h3 class="font-display font-bold text-lg mb-2">Descripción</h3>
+        <p class="text-muted whitespace-pre-line leading-relaxed text-[15px]">{{ item.description }}</p>
       </div>
     </div>
   </div>

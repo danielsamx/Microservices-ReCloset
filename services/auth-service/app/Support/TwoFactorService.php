@@ -5,6 +5,7 @@ use App\Mail\TwoFactorCodeMail;
 use App\Models\TwoFactorChallenge;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 
 class TwoFactorService
@@ -36,7 +37,22 @@ class TwoFactorService
 
         $context = $purpose === 'enable' ? 'activar la verificación en dos pasos' : 'iniciar sesión';
         $sent = SafeMailer::send($user->email, new TwoFactorCodeMail($code, $context, self::TTL_MINUTES), '2fa');
-        if (!$sent) {
+
+        // Conveniencia de desarrollo: en APP_ENV=local registra el código para
+        // poder probar TODO el flujo 2FA sin depender del proveedor de correo.
+        // NUNCA se registra el código en producción.
+        if (app()->environment('local', 'testing')) {
+            Log::info('2fa.dev_code', [
+                'user_id' => $user->id,
+                'purpose' => $purpose,
+                'code'    => $code,
+                'note'    => 'Visible solo en APP_ENV=local. Úsalo para probar el flujo 2FA.',
+            ]);
+        }
+
+        // En producción, si el correo falla no dejamos un reto que el usuario
+        // no podría completar. En local seguimos (el código está en el log).
+        if (!$sent && !app()->environment('local', 'testing')) {
             $challenge->delete();
             throw new \RuntimeException('No se pudo enviar el código de verificación.');
         }

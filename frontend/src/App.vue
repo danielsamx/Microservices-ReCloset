@@ -22,9 +22,9 @@ watch(() => auth.token, boot)
     <!-- El <div> envolvente da a <transition> un único nodo raíz.
          Sin él, las vistas que devuelven fragmentos (varias secciones)
          no pueden animarse y con mode="out-in" no llegan a montarse. -->
-    <router-view v-slot="{ Component }">
+    <router-view v-slot="{ Component, route }">
       <transition name="route" mode="out-in">
-        <div>
+        <div :key="route.path">
           <component :is="Component" />
         </div>
       </transition>

@@ -14,12 +14,15 @@ export default [
     },
     rules: {
       // No bloquear el pipeline por estilo/uso; se reporta como aviso.
-      'no-unused-vars': 'warn',
+      'no-unused-vars': ['warn', { caughtErrors: 'none', argsIgnorePattern: '^_', varsIgnorePattern: '^_' }],
+      'no-empty': ['warn', { allowEmptyCatch: true }],
       'no-undef': 'warn',
-      'no-empty': 'warn',
       'vue/multi-word-component-names': 'off',
       'vue/no-unused-vars': 'warn',
       'vue/require-v-for-key': 'warn',
+      // El <div> envolvente dentro de <transition> es intencional (evita el
+      // problema de raíz-fragmento en vistas con varios nodos raíz).
+      'vue/require-toggle-inside-transition': 'off',
     },
   },
 ]

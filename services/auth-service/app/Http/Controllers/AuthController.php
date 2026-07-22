@@ -3,9 +3,12 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Validation\Rules\Password;
 use Illuminate\Validation\ValidationException;
 use App\Models\User;
+use App\Mail\WelcomeMail;
+use App\Support\TwoFactorService;
 
 class AuthController extends Controller
 {
@@ -24,11 +27,20 @@ class AuthController extends Controller
         ]);
         $token = $user->createToken('web')->plainTextToken;
         Log::info('auth.register', ['user_id' => $user->id]);
+
+        // Correos de bienvenida y verificación (no deben romper el registro si fallan).
+        try {
+            Mail::to($user->email)->send(new WelcomeMail($user->name, config('app.frontend_url').'/#/catalog'));
+            EmailVerificationController::send($user);
+        } catch (\Throwable $e) {
+            Log::warning('auth.register_mail_failed', ['user_id' => $user->id, 'error' => $e->getMessage()]);
+        }
+
         return response()->json(['user' => $user, 'token' => $token], 201);
     }
 
     // RF-02 Login
-    public function login(Request $request)
+    public function login(Request $request, TwoFactorService $twoFactor)
     {
         $data = $request->validate([
             'email' => ['required', 'email'],
@@ -39,6 +51,19 @@ class AuthController extends Controller
             Log::warning('auth.login_failed', ['email_hash' => sha1(strtolower($data['email']))]);
             throw ValidationException::withMessages(['email' => ['Correo o contraseña incorrectos.']]);
         }
+
+        // Si el usuario tiene 2FA activo, no entregamos token todavía:
+        // enviamos un código OTP y devolvemos un reto para completarlo.
+        if ($user->two_factor_enabled) {
+            $challenge = $twoFactor->start($user, 'login');
+            Log::info('auth.login_2fa_challenge', ['user_id' => $user->id]);
+            return response()->json([
+                'requires_2fa' => true,
+                'challenge' => $challenge,
+                'message' => 'Te enviamos un código de verificación a tu correo.',
+            ]);
+        }
+
         $token = $user->createToken('web')->plainTextToken;
         Log::info('auth.login', ['user_id' => $user->id]);
         return response()->json(['user' => $user, 'token' => $token]);

@@ -16,5 +16,12 @@ return [
             'driver' => 'stack',
             'channels' => ['stderr'],
         ],
+        // Canal de correo: en desarrollo (MAIL_MAILER=log) los emails, con sus
+        // enlaces y códigos, se escriben aquí para poder leerlos fácilmente.
+        'mail' => [
+            'driver' => 'single',
+            'path' => storage_path('logs/mail.log'),
+            'level' => 'debug',
+        ],
     ],
 ];

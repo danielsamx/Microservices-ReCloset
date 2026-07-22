@@ -21,6 +21,7 @@ async function submit() {
   try {
     await auth.register(form.value)
     toasts.success('¡Cuenta creada! Bienvenido a ReCloset.')
+    toasts.info('Te enviamos un correo para verificar tu cuenta.', 6000)
     router.push('/catalog')
   } catch (e) {
     if (e.response?.data?.errors) errors.value = e.response.data.errors

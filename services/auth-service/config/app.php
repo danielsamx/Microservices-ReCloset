@@ -4,6 +4,8 @@ return [
     'env' => env('APP_ENV', 'production'),
     'debug' => (bool) env('APP_DEBUG', false),
     'url' => env('APP_URL', 'http://localhost'),
+    // Base del frontend, para construir enlaces de verificación / reset en los correos.
+    'frontend_url' => rtrim(env('FRONTEND_URL', 'http://localhost:5173'), '/'),
     'timezone' => 'UTC',
     'locale' => env('APP_LOCALE', 'es'),
     'fallback_locale' => 'es',

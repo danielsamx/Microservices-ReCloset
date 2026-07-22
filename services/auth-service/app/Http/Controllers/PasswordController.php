@@ -3,12 +3,12 @@ namespace App\Http\Controllers;
 
 use App\Mail\ResetPasswordMail;
 use App\Models\User;
+use App\Support\SafeMailer;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rules\Password;
 
@@ -31,7 +31,7 @@ class PasswordController extends Controller
                 ['token' => Hash::make($token), 'created_at' => now()],
             );
             $url = config('app.frontend_url').'/#/reset-password?token='.$token.'&email='.urlencode($email);
-            Mail::to($email)->send(new ResetPasswordMail($user->name, $url));
+            SafeMailer::send($email, new ResetPasswordMail($user->name, $url), 'password_reset');
             Log::info('auth.password_forgot', ['user_id' => $user->id]);
         }
 

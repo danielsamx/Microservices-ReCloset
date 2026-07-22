@@ -3,11 +3,11 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Mail;
 use Illuminate\Validation\Rules\Password;
 use Illuminate\Validation\ValidationException;
 use App\Models\User;
 use App\Mail\WelcomeMail;
+use App\Support\SafeMailer;
 use App\Support\TwoFactorService;
 
 class AuthController extends Controller
@@ -29,12 +29,8 @@ class AuthController extends Controller
         Log::info('auth.register', ['user_id' => $user->id]);
 
         // Correos de bienvenida y verificación (no deben romper el registro si fallan).
-        try {
-            Mail::to($user->email)->send(new WelcomeMail($user->name, config('app.frontend_url').'/#/catalog'));
-            EmailVerificationController::send($user);
-        } catch (\Throwable $e) {
-            Log::warning('auth.register_mail_failed', ['user_id' => $user->id, 'error' => $e->getMessage()]);
-        }
+        SafeMailer::send($user->email, new WelcomeMail($user->name, config('app.frontend_url').'/#/catalog'), 'welcome');
+        EmailVerificationController::send($user);
 
         return response()->json(['user' => $user, 'token' => $token], 201);
     }
@@ -55,7 +51,11 @@ class AuthController extends Controller
         // Si el usuario tiene 2FA activo, no entregamos token todavía:
         // enviamos un código OTP y devolvemos un reto para completarlo.
         if ($user->two_factor_enabled) {
-            $challenge = $twoFactor->start($user, 'login');
+            try {
+                $challenge = $twoFactor->start($user, 'login');
+            } catch (\Throwable $e) {
+                return response()->json(['message' => 'No pudimos enviar el código de verificación. Inténtalo de nuevo en un momento.'], 502);
+            }
             Log::info('auth.login_2fa_challenge', ['user_id' => $user->id]);
             return response()->json([
                 'requires_2fa' => true,

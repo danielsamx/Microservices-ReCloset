@@ -39,7 +39,11 @@ class TwoFactorController extends Controller
         if ($user->two_factor_enabled) {
             return response()->json(['message' => 'La verificación en dos pasos ya está activada.'], 422);
         }
-        $challenge = $this->twoFactor->start($user, 'enable');
+        try {
+            $challenge = $this->twoFactor->start($user, 'enable');
+        } catch (\Throwable $e) {
+            return response()->json(['message' => 'No pudimos enviar el código a tu correo. Inténtalo de nuevo en un momento.'], 502);
+        }
         return response()->json([
             'message' => 'Te enviamos un código para activar la verificación en dos pasos.',
             'challenge' => $challenge,

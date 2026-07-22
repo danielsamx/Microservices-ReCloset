@@ -5,7 +5,6 @@ use App\Mail\TwoFactorCodeMail;
 use App\Models\TwoFactorChallenge;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
 
 class TwoFactorService
@@ -16,6 +15,7 @@ class TwoFactorService
     /**
      * Crea un reto OTP para el usuario, envía el código por email y
      * devuelve el token público (a usar por el cliente al verificar).
+     * Lanza \RuntimeException si el correo no se pudo enviar (el reto se limpia).
      */
     public function start(User $user, string $purpose): string
     {
@@ -25,7 +25,7 @@ class TwoFactorService
         $code = str_pad((string) random_int(0, 999999), 6, '0', STR_PAD_LEFT);
         $token = Str::random(48);
 
-        TwoFactorChallenge::create([
+        $challenge = TwoFactorChallenge::create([
             'user_id' => $user->id,
             'purpose' => $purpose,
             'token' => $token,
@@ -35,7 +35,11 @@ class TwoFactorService
         ]);
 
         $context = $purpose === 'enable' ? 'activar la verificación en dos pasos' : 'iniciar sesión';
-        Mail::to($user->email)->send(new TwoFactorCodeMail($code, $context, self::TTL_MINUTES));
+        $sent = SafeMailer::send($user->email, new TwoFactorCodeMail($code, $context, self::TTL_MINUTES), '2fa');
+        if (!$sent) {
+            $challenge->delete();
+            throw new \RuntimeException('No se pudo enviar el código de verificación.');
+        }
 
         return $token;
     }

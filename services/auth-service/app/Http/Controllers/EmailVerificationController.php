@@ -3,12 +3,12 @@ namespace App\Http\Controllers;
 
 use App\Mail\VerifyEmailMail;
 use App\Models\User;
+use App\Support\SafeMailer;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
 
 class EmailVerificationController extends Controller
@@ -32,7 +32,7 @@ class EmailVerificationController extends Controller
         );
 
         $url = config('app.frontend_url').'/#/verify-email?token='.$token.'&email='.urlencode($user->email);
-        Mail::to($user->email)->send(new VerifyEmailMail($user->name, $url));
+        SafeMailer::send($user->email, new VerifyEmailMail($user->name, $url), 'email_verification');
     }
 
     // POST /api/auth/email/resend  (auth)

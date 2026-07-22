@@ -1,0 +1,139 @@
+name: CI/CD
+
+# Integración y despliegue continuo de ReCloset.
+#  - En cada push / PR: valida y prueba (lint PHP, build del frontend, config de compose).
+#  - En push a main: construye y publica las imágenes Docker en GitHub Container Registry (GHCR).
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_PREFIX: ${{ github.repository }}   # ghcr.io/owner/repo/<servicio>
+
+jobs:
+  # ---------------------------------------------------------
+  # 1) Validación y pruebas
+  # ---------------------------------------------------------
+  test-backend:
+    name: Backend · lint PHP (${{ matrix.service }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        service: [auth-service, item-service, chat-service, media-service]
+    steps:
+      - uses: actions/checkout@v4
+      - name: Configurar PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+          extensions: pdo_pgsql, zip, bcmath
+          tools: composer:v2
+      - name: Instalar dependencias
+        working-directory: services/${{ matrix.service }}
+        run: composer install --no-interaction --prefer-dist --no-progress
+      - name: Lint de sintaxis PHP
+        working-directory: services/${{ matrix.service }}
+        run: find app config routes database -name "*.php" -print0 | xargs -0 -n1 php -l
+      - name: Ejecutar pruebas (si existen)
+        working-directory: services/${{ matrix.service }}
+        run: |
+          if [ -d tests ] && ls tests/**/*Test.php >/dev/null 2>&1; then
+            php artisan test || vendor/bin/phpunit
+          else
+            echo "Sin pruebas automatizadas en este servicio (pendiente)."
+          fi
+
+  test-frontend:
+    name: Frontend · build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+      - name: Instalar dependencias
+        working-directory: frontend
+        run: npm ci
+      - name: Compilar (vite build)
+        working-directory: frontend
+        run: npm run build
+
+  validate-compose:
+    name: Infra · validar docker-compose
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: docker compose config
+        run: |
+          cp .env.example .env
+          docker compose config >/dev/null
+          echo "docker-compose válido."
+
+  # ---------------------------------------------------------
+  # 2) Build y publicación de imágenes (solo en push a main)
+  # ---------------------------------------------------------
+  build-and-push:
+    name: Build & push · ${{ matrix.image.name }}
+    runs-on: ubuntu-latest
+    needs: [test-backend, test-frontend, validate-compose]
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    permissions:
+      contents: read
+      packages: write
+    strategy:
+      fail-fast: false
+      matrix:
+        image:
+          - { name: auth-service,  context: services/auth-service }
+          - { name: item-service,  context: services/item-service }
+          - { name: chat-service,  context: services/chat-service }
+          - { name: media-service, context: services/media-service }
+          - { name: frontend,      context: frontend }
+    steps:
+      - uses: actions/checkout@v4
+      - name: Login en GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Metadatos (tags)
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_PREFIX }}/${{ matrix.image.name }}
+          tags: |
+            type=raw,value=latest
+            type=sha,format=short
+      - name: Build & push
+        uses: docker/build-push-action@v6
+        with:
+          context: ${{ matrix.image.context }}
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+  # ---------------------------------------------------------
+  # 3) Despliegue (marcador — completar según el entorno real)
+  # ---------------------------------------------------------
+  deploy:
+    name: Deploy
+    runs-on: ubuntu-latest
+    needs: build-and-push
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    environment: production
+    steps:
+      - name: Aplicar manifiestos de Kubernetes
+        run: |
+          echo "Paso de despliegue. Opciones:"
+          echo " - kubectl set image deployment/<svc> ... (rolling update)"
+          echo " - o kubectl apply -f k8s/ contra el clúster (requiere KUBE_CONFIG en secrets)."
+          echo "Se deja como marcador para conectar con tu clúster real."

@@ -270,6 +270,26 @@ services:
       - prometheus-data:/prometheus
     networks: [recloset]
 
+  # Grafana: visualización de las métricas de Prometheus (dashboards provisionados)
+  grafana:
+    image: grafana/grafana:11.2.0
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      GF_SECURITY_ADMIN_USER: ${GRAFANA_ADMIN_USER:-admin}
+      GF_SECURITY_ADMIN_PASSWORD: ${GRAFANA_ADMIN_PASSWORD:-admin}
+      GF_USERS_ALLOW_SIGN_UP: "false"
+      GF_ANALYTICS_REPORTING_ENABLED: "false"
+      GF_ANALYTICS_CHECK_FOR_UPDATES: "false"
+    volumes:
+      - ./monitoring/grafana/provisioning:/etc/grafana/provisioning:ro
+      - ./monitoring/grafana/dashboards:/var/lib/grafana/dashboards:ro
+      - grafana-data:/var/lib/grafana
+    depends_on:
+      - prometheus
+    networks: [recloset]
+
 networks:
   recloset:
     driver: bridge
@@ -281,3 +301,4 @@ volumes:
   media-db-data:
   media-blob-data:      # object/blob store persistence - survives container recreation
   prometheus-data:
+  grafana-data:         # dashboards, usuarios y ajustes de Grafana

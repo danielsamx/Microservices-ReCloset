@@ -43,7 +43,8 @@ Documentación detallada en [`docs/`](docs/):
 | [DATABASE.md](docs/DATABASE.md) | Bases de datos, migraciones, relaciones, separación de datos |
 | [DOCKER.md](docs/DOCKER.md) | Construcción, ejecución, logs, volúmenes, redes |
 | [KUBERNETES.md](docs/KUBERNETES.md) | Despliegue, escalado, probes, secrets |
-| [MONITORING.md](docs/MONITORING.md) | Prometheus: justificación, configuración, consultas |
+| [MONITORING.md](docs/MONITORING.md) | Prometheus + Grafana: métricas, dashboards, consultas |
+| [CICD.md](docs/CICD.md) | CI/CD con GitHub Actions: pruebas, build de imágenes, despliegue |
 
 ---
 
@@ -77,6 +78,7 @@ Servicios expuestos:
 | http://localhost:5173 | Frontend (Vue) |
 | http://localhost:8080 | API Gateway |
 | http://localhost:9090 | Prometheus |
+| http://localhost:3000 | Grafana (dashboards de métricas) |
 
 Las migraciones y el *seeding* del catálogo (categorías, tallas, colores) se ejecutan automáticamente al arrancar cada servicio (ver `docker/entrypoint.sh`).
 

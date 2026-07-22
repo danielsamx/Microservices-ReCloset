@@ -50,3 +50,63 @@ Cada línea de log es JSON e incluye: `service`, fecha/hora (`datetime`), nivel 
 ```
 
 **No se registran** contraseñas, tokens ni claves. Los identificadores sensibles (email en login fallido) se *hashean* antes de loggear.
+
+---
+
+## Visualización con Grafana
+
+Prometheus recolecta y almacena las métricas; **Grafana** las visualiza en dashboards. Grafana se añadió al stack (`docker-compose.yml`, servicio `grafana`) y toma Prometheus como fuente de datos.
+
+### Acceso
+
+| URL | Servicio | Credenciales |
+|-----|----------|--------------|
+| http://localhost:3000 | Grafana | `GRAFANA_ADMIN_USER` / `GRAFANA_ADMIN_PASSWORD` (por defecto `admin` / `admin`) |
+| http://localhost:9090 | Prometheus | — |
+
+Cambia la contraseña por defecto en el `.env` antes de exponerlo.
+
+### Provisionamiento automático
+
+Todo se configura solo al arrancar (sin pasos manuales), mediante archivos montados:
+
+```
+monitoring/grafana/
+├── provisioning/
+│   ├── datasources/prometheus.yml     # conecta Grafana -> Prometheus (http://prometheus:9090)
+│   └── dashboards/dashboards.yml      # registra la carpeta de dashboards
+└── dashboards/
+    └── recloset-overview.json         # dashboard principal
+```
+
+- **Datasource:** `Prometheus` queda como fuente por defecto, apuntando al servicio interno `prometheus:9090`.
+- **Dashboard:** `ReCloset · Visión general de microservicios` se carga automáticamente en la carpeta *ReCloset*.
+
+### Dashboard "Visión general de microservicios"
+
+Incluye, con un selector de servicio (`$service`):
+
+| Panel | Métrica / consulta |
+|-------|--------------------|
+| Disponibilidad de servicios | `recloset_up` (ARRIBA/CAÍDO por servicio) |
+| Solicitudes por segundo | `rate(recloset_http_requests_total[5m])` |
+| Tiempo de respuesta medio | `recloset_http_response_ms_avg` (ms) |
+| Errores 5xx acumulados | `recloset_http_errors_total` |
+| Solicitudes totales | `recloset_http_requests_total` |
+
+### Puesta en marcha
+
+```bash
+docker compose up -d prometheus grafana
+# Abre http://localhost:3000 -> inicia sesión -> carpeta "ReCloset" -> dashboard
+```
+
+### En Kubernetes
+
+`k8s/51-grafana.yaml` despliega Grafana con el datasource y el provider de dashboards como `ConfigMap`, y un `Service` tipo `LoadBalancer` en el puerto 3000. La contraseña de admin se toma del `Secret` `recloset-secrets` (`GRAFANA_ADMIN_PASSWORD`).
+
+```bash
+kubectl apply -f k8s/51-grafana.yaml
+```
+
+> Nota sobre "una única herramienta": Prometheus sigue siendo el motor de métricas y alertas; Grafana es la **capa de visualización** encima de esos mismos datos (no un segundo sistema de recolección).

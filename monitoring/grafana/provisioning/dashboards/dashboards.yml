@@ -1,0 +1,11 @@
+apiVersion: 1
+providers:
+  - name: ReCloset
+    orgId: 1
+    folder: ReCloset
+    type: file
+    disableDeletion: false
+    editable: true
+    updateIntervalSeconds: 15
+    options:
+      path: /var/lib/grafana/dashboards

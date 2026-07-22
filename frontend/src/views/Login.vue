@@ -5,7 +5,7 @@ import { useAuth } from '../store/auth'
 import { useToasts } from '../store/toasts'
 import Spinner from '../components/ui/Spinner.vue'
 import Icon from '../components/ui/Icon.vue'
-import Logo from '../components/ui/Logo.vue'
+import logotipoUrl from '../public/logotipo - recloset.png'
 import OtpInput from '../components/ui/OtpInput.vue'
 
 const auth = useAuth(); const router = useRouter(); const toasts = useToasts()
@@ -70,7 +70,7 @@ function backToCredentials() { step.value = 'credentials'; code.value = ''; otpE
 <template>
   <div class="max-w-md mx-auto mt-4 sm:mt-10">
     <div class="text-center mb-6">
-      <Logo :size="52" class="mx-auto mb-2" />
+      <img :src="logotipoUrl" alt="ReCloset Logotipo" class="h-24 mx-auto mb-2 object-contain" />
       <h1 class="font-display font-extrabold text-2xl sm:text-3xl mt-3">
         {{ step === 'otp' ? 'Verificación en dos pasos' : 'Bienvenido de vuelta' }}
       </h1>

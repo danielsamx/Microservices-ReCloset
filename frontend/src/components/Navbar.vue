@@ -6,6 +6,7 @@ import { useNotifications } from '../store/notifications'
 import NotificationsModal from './NotificationsModal.vue'
 import Icon from './ui/Icon.vue'
 import ThemeToggle from './ui/ThemeToggle.vue'
+import isotipoUrl from '../public/isotipo - recloset.png'
 
 const auth = useAuth()
 const notif = useNotifications()
@@ -35,10 +36,7 @@ onBeforeUnmount(() => document.removeEventListener('click', close))
   <header class="sticky top-0 z-30 glass-strong border-0 border-b" style="border-color: var(--border);">
     <div class="max-w-7xl mx-auto px-4 sm:px-5 h-16 flex items-center gap-2">
       <router-link to="/" class="group flex items-center gap-2.5 mr-1 shrink-0" aria-label="ReCloset inicio">
-        <span class="relative w-9 h-9 rounded-xl bg-gradient-to-br from-brand-400 to-brand-700 text-white grid place-items-center font-bold shadow-glow font-display transition-transform duration-300 group-hover:scale-105 group-hover:rotate-3">
-          R
-          <span class="absolute -inset-0.5 rounded-xl bg-brand-400/30 blur-md -z-10 opacity-0 group-hover:opacity-100 transition-opacity"></span>
-        </span>
+        <img :src="isotipoUrl" alt="Isotipo ReCloset" class="w-9 h-9 object-contain shrink-0" />
         <span class="font-display font-extrabold text-lg tracking-tight hidden sm:block">Re<span class="text-gradient">Closet</span></span>
       </router-link>
 

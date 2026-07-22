@@ -3,7 +3,7 @@ import { ref } from 'vue'
 import { useAuth } from '../store/auth'
 import Spinner from '../components/ui/Spinner.vue'
 import Icon from '../components/ui/Icon.vue'
-import Logo from '../components/ui/Logo.vue'
+import logotipoUrl from '../public/logotipo - recloset.png'
 
 const auth = useAuth()
 const email = ref('')
@@ -28,7 +28,7 @@ async function submit() {
 <template>
   <div class="max-w-md mx-auto mt-4 sm:mt-10">
     <div class="text-center mb-6">
-      <Logo :size="52" class="mx-auto mb-2" />
+      <img :src="logotipoUrl" alt="ReCloset Logotipo" class="h-24 mx-auto mb-2 object-contain" />
       <h1 class="font-display font-extrabold text-2xl sm:text-3xl mt-3">Recupera tu cuenta</h1>
       <p class="text-sm text-faint mt-1">Te enviaremos un enlace para restablecer tu contraseña</p>
     </div>

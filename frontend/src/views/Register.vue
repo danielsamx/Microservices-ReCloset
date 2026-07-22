@@ -6,7 +6,7 @@ import { useToasts } from '../store/toasts'
 import Spinner from '../components/ui/Spinner.vue'
 import Icon from '../components/ui/Icon.vue'
 import FormErrors from '../components/ui/FormErrors.vue'
-import Logo from '../components/ui/Logo.vue'
+import logotipoUrl from '../public/logotipo - recloset.png'
 const auth = useAuth(); const router = useRouter(); const toasts = useToasts()
 const form = ref({ name: '', email: '', password: '', password_confirmation: '' })
 const errors = ref({}); const loading = ref(false); const generalError = ref('')
@@ -34,7 +34,7 @@ async function submit() {
 <template>
   <div class="max-w-md mx-auto mt-4 sm:mt-8">
     <div class="text-center mb-6">
-      <Logo :size="52" class="mx-auto mb-2" />
+      <img :src="logotipoUrl" alt="ReCloset Logotipo" class="h-24 mx-auto mb-2 object-contain" />
       <h1 class="font-display font-extrabold text-2xl sm:text-3xl mt-3">Crea tu cuenta</h1>
       <p class="text-sm text-faint mt-1">Únete a la comunidad de moda circular</p>
     </div>

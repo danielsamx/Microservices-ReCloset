@@ -5,7 +5,7 @@ import { useAuth } from '../store/auth'
 import { useToasts } from '../store/toasts'
 import Spinner from '../components/ui/Spinner.vue'
 import Icon from '../components/ui/Icon.vue'
-import Logo from '../components/ui/Logo.vue'
+import logotipoUrl from '../public/logotipo - recloset.png'
 
 const route = useRoute(); const router = useRouter()
 const auth = useAuth(); const toasts = useToasts()
@@ -49,7 +49,7 @@ async function submit() {
 <template>
   <div class="max-w-md mx-auto mt-4 sm:mt-10">
     <div class="text-center mb-6">
-      <Logo :size="52" class="mx-auto mb-2" />
+      <img :src="logotipoUrl" alt="ReCloset Logotipo" class="h-24 mx-auto mb-2 object-contain" />
       <h1 class="font-display font-extrabold text-2xl sm:text-3xl mt-3">Nueva contraseña</h1>
       <p class="text-sm text-faint mt-1">Crea una contraseña segura para tu cuenta</p>
     </div>
